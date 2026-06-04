@@ -1,75 +1,70 @@
 # UIO ProPrep
 
-Statička HTML/CSS/JS PWA aplikacija za učenje pitanja za stručni ispit.
+Mobile-first HTML/CSS/JavaScript PWA za pripremu UIO stručnog ispita. Free sadržaj i napredak rade offline; Supabase prijava dodaje sinkronizaciju između uređaja i zaštićeni premium sadržaj.
 
-## Šta je uključeno
+## Tehnologije
 
-- Kviz po oblastima
-- Režimi učenja: sva dostupna pitanja, pogrešna pitanja i simulacija ispita
-- Kartice za ponavljanje
-- Lokalni priručnik sa pretragom
-- Lokalno čuvanje napretka preko `localStorage`
-- PWA manifest i service worker za offline rad
-- Pitanja u `data/questions.json`, bez baze podataka
-- Free/premium MVP razdvajanje sadržaja bez prave naplatne zaštite
+- Vite, obični HTML/CSS/JavaScript moduli
+- `vite-plugin-pwa` inject-manifest service worker
+- Supabase Auth, Postgres i Row Level Security
+- Vitest
+- Vercel deploy
 
-## Pokretanje lokalno
+## Lokalno pokretanje
 
 ```bash
-python3 -m http.server 8080
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-Zatim otvoriti:
+Otvorite `http://localhost:5173`. Aplikacija radi kao gost i bez Supabase varijabli; prijava, cloud sync i premium dohvat tada su namjerno nedostupni.
 
-```text
-http://localhost:8080
-```
-
-## Validacija sadržaja
+## Skripte
 
 ```bash
-node scripts/validate-content.mjs
+npm run dev
+npm run build
+npm run preview
+npm test
+npm run validate:content
 ```
 
-Validator provjerava stabilni schema pitanja: `id`, `categoryId`, 4 odgovora, `answerIndex`, `rationale`, `source`, `difficulty`, `access`, duple odgovore i duple tekstove pitanja.
+## Sadržaj
 
-## Workflow za dodavanje pitanja
+- Free pitanja: `public/data/questions.json`
+- Premium pitanja: `public.premium_questions` u Supabaseu
+- Početni premium seed i RLS: `supabase/migrations/20260604120000_auth_sync_and_premium.sql`
+- Šablon pitanja: `data/question-template.json`
 
-1. Otvoriti `data/question-template.json`.
-2. Kopirati šablon u `questions` niz u `data/questions.json`.
-3. Popuniti tekst pitanja, 4 odgovora, `answerIndex`, objašnjenje, izvor, težinu i keyworde.
-4. Pokrenuti `node scripts/validate-content.mjs`.
-5. Pokrenuti `python3 -m http.server 8080`.
-6. Ručno testirati novo pitanje u kvizu i pretrazi.
+Workflow za free pitanje:
 
-Detaljna pravila su u `docs/content-guidelines.md`, a ručna provjera aplikacije je u `docs/manual-test-checklist.md`.
+1. Dodajte provjereno pitanje u `public/data/questions.json`.
+2. Pokrenite `npm run validate:content`.
+3. Pokrenite `npm run dev` i ručno testirajte kviz, kartice i pretragu.
 
-## Struktura
+Premium pitanja se ne smiju vraćati u javni JSON. Dodaju se versioniranom SQL migracijom ili sigurnim server-side admin tokom u budućnosti.
 
-```text
-.
-├── assets/icons/icon.svg
-├── css/styles.css
-├── data/questions.json
-├── data/question-template.json
-├── docs/content-guidelines.md
-├── docs/manual-test-checklist.md
-├── js/app.js
-├── js/storage.js
-├── scripts/validate-content.mjs
-├── index.html
-├── manifest.webmanifest
-└── service-worker.js
+## Supabase
+
+Kopirajte `.env.example` u `.env` i unesite samo javne browser varijable:
+
+```env
+VITE_SUPABASE_URL=
+VITE_SUPABASE_PUBLISHABLE_KEY=
 ```
 
-## Sljedeći koraci
+Detaljna konfiguracija email potvrde, Google OAutha, migracija, premium prava i Vercela opisana je u `docs/supabase-setup.md`.
 
-1. Unijeti svih ~150 provjerenih UIO pitanja.
-2. Zamijeniti privremene izvore tačnim propisima i članovima.
-3. Testirati PWA offline ponašanje na Androidu i iPhoneu.
-4. Validirati spremnost korisnika na plaćanje prije backend-a.
-5. Razmotriti backend tek kada se validira potražnja.
+## Lokalni storage i sync
 
-## Napomena
+Storage v3 čuva legacy baseline, nepromjenjive answer evente, pokušaje, offline queue, zadnji sync i vremenski ograničen premium cache. Prva prijava pametno spaja lokalne i cloud podatke bez zbrajanja istog legacy baselinea.
 
-Demo premium kod je `UIO-PREMIUM-2026`. To nije sigurnosni sistem niti prava naplata; služi samo za testiranje ponude u MVP fazi.
+## Sigurnost
+
+- Secret/service-role ključ nikada ne ide u frontend ili repo.
+- RLS ograničava korisnika na vlastiti profil, napredak i entitlement.
+- Premium pitanja može čitati samo korisnik s aktivnim premium entitlementom.
+- Service worker cacheira samo same-origin app shell/free sadržaj, ne Supabase Auth/API zahtjeve.
+
+UIO ProPrep je nezavisni obrazovni alat i nije zvanično povezan s Upravom za indirektno oporezivanje BiH.

@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 
-const filePath = new URL("../data/questions.json", import.meta.url);
+const filePath = new URL("../public/data/questions.json", import.meta.url);
 const data = JSON.parse(await readFile(filePath, "utf8"));
 const errors = [];
 const warnings = [];
@@ -68,6 +68,7 @@ data.questions.forEach((question, index) => {
 
   if (!validDifficulties.has(question.difficulty)) errors.push(`${label}: invalid difficulty.`);
   if (!validAccess.has(question.access)) errors.push(`${label}: invalid access.`);
+  if (question.access === "premium") errors.push(`${label}: premium questions must be stored in protected Supabase migrations, not the public JSON.`);
   if (normalize(question.source).includes("provjeriti")) {
     warnings.push(`${label}: source still contains "provjeriti"; replace before production.`);
   }

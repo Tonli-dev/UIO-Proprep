@@ -1,19 +1,32 @@
 # Manual QA checklist
 
+## Račun i sinkronizacija
+
+- [ ] Gost može koristiti free sadržaj bez `.env` konfiguracije.
+- [ ] Email registracija traži potvrdu emaila.
+- [ ] Google i email prijava vraćaju korisnika na root aplikacije.
+- [ ] Prvi login prenosi lokalni napredak u cloud bez dupliranja.
+- [ ] Offline odgovori ostaju lokalno i sinkroniziraju se nakon povratka mreže.
+- [ ] Ručni sync, odjava, promjena imena i reset lozinke rade.
+- [ ] Reset prijavljenog korisnika briše lokalni i cloud napredak.
+- [ ] Free korisnik direktnim Supabase upitom ne može dohvatiti premium pitanja.
+- [ ] Manipulacija localStorage-a ne dodjeljuje premium pravo.
+- [ ] Premium cache prestaje vrijediti nakon isteka entitlementa.
+
 Pokrenuti aplikaciju:
 
 ```bash
-python3 -m http.server 8080
+npm run dev
 ```
 
-Otvoriti `http://127.0.0.1:8080`.
+Otvoriti `http://localhost:5173`.
 
 ## Dashboard
 
 - Prikazuje broj pitanja i cilj `150`.
 - Prikazuje free/premium status sadržaja.
 - Statistike su `0` na čistom browser storage-u.
-- Reset napretka briše statistiku, historiju i premium demo unlock.
+- Reset napretka gosta briše lokalnu statistiku i historiju.
 
 ## Kvizovi
 
@@ -26,7 +39,7 @@ Otvoriti `http://127.0.0.1:8080`.
 ## Simulacija ispita
 
 - U free verziji CTA vodi na Postavke.
-- Demo kod `UIO-PREMIUM-2026` otključava simulaciju.
+- Premium simulacija je dostupna samo korisniku s aktivnim Supabase entitlementom.
 - Timer se prikazuje i odbrojava.
 - Rezultat prikazuje procenat, prolaz/pad status i pogrešna pitanja.
 
