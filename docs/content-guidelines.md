@@ -1,6 +1,6 @@
 # Pravila za unos pitanja
 
-Ovaj projekat nema admin panel u MVP fazi. Pitanja se ručno dodaju u `data/questions.json`, a `data/question-template.json` služi kao kopirni šablon.
+Ovaj projekat nema admin panel u MVP fazi. Free pitanja se ručno dodaju u `public/data/questions.json`, a `data/question-template.json` služi kao kopirni šablon. Premium pitanja se dodaju kroz versioniranu Supabase SQL migraciju.
 
 ## Schema pitanja
 
@@ -29,7 +29,7 @@ Svako pitanje mora imati:
 ## Workflow
 
 1. Kopirati `data/question-template.json`.
-2. Umetnuti objekat u `questions` niz u `data/questions.json`.
+2. Umetnuti objekat u `questions` niz u `public/data/questions.json`.
 3. Promijeniti `id`, `categoryId`, tekst, odgovore, `answerIndex`, `rationale`, `source`, `difficulty`, `access` i `keywords`.
 4. Pokrenuti `node scripts/validate-content.mjs`.
 5. Pokrenuti lokalni server i ručno testirati pitanje u kvizu i pretrazi.

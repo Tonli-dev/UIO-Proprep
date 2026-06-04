@@ -1,0 +1,50 @@
+import { requireSupabase, supabase } from "./supabase-client.js";
+
+const redirectTo = () => `${window.location.origin}/`;
+
+export async function signUpWithEmail(email, password) {
+  return requireSupabase().auth.signUp({ email, password, options: { emailRedirectTo: redirectTo() } });
+}
+
+export async function signInWithEmail(email, password) {
+  return requireSupabase().auth.signInWithPassword({ email, password });
+}
+
+export async function signInWithGoogle() {
+  return requireSupabase().auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: redirectTo() }
+  });
+}
+
+export async function requestPasswordReset(email) {
+  return requireSupabase().auth.resetPasswordForEmail(email, { redirectTo: redirectTo() });
+}
+
+export async function updatePassword(password) {
+  return requireSupabase().auth.updateUser({ password });
+}
+
+export async function signOut() {
+  return requireSupabase().auth.signOut();
+}
+
+export async function updateProfile(displayName) {
+  const client = requireSupabase();
+  const { data: sessionData } = await client.auth.getSession();
+  const userId = sessionData.session?.user?.id;
+  if (!userId) throw new Error("Prijavite se prije uređivanja profila.");
+  return client.from("profiles").update({ display_name: displayName, updated_at: new Date().toISOString() }).eq("id", userId);
+}
+
+export async function getCurrentSession() {
+  if (!supabase) return null;
+  const { data } = await supabase.auth.getSession();
+  return data.session;
+}
+
+export function onAuthStateChange(callback) {
+  if (!supabase) return { unsubscribe() {} };
+  const { data } = supabase.auth.onAuthStateChange((event, session) => callback(event, session));
+  return data.subscription;
+}

@@ -1,9 +1,39 @@
-const PREMIUM_CODE = "UIO-PREMIUM-2026";
-const MAX_ATTEMPTS = 12;
+import { registerSW } from "virtual:pwa-register";
+import {
+  readProgress,
+  recordAnswer,
+  recordAttempt,
+  resetLocalProgress,
+  getCachedPremiumQuestions,
+  clearAccountCache,
+  getLocalState
+} from "./storage.js";
+import {
+  getCurrentSession,
+  onAuthStateChange,
+  requestPasswordReset,
+  signInWithEmail,
+  signInWithGoogle,
+  signOut,
+  signUpWithEmail,
+  updatePassword,
+  updateProfile
+} from "./auth.js";
+import {
+  getEffectiveEntitlement,
+  loadAccountData,
+  loadPremiumQuestions,
+  resetCloudProgress,
+  syncProgress
+} from "./sync.js";
 
 const state = {
   data: null,
-  progress: window.ProPrepStorage.readProgress(),
+  progress: readProgress(),
+  session: null,
+  account: null,
+  entitlement: getEffectiveEntitlement(),
+  premiumQuestions: [],
   activeMode: null,
   activeCategory: null,
   activeQuestions: [],
@@ -15,7 +45,9 @@ const state = {
   flashcardFlipped: false,
   examTimerId: null,
   examSecondsRemaining: 0,
-  deferredInstallPrompt: null
+  deferredInstallPrompt: null,
+  syncInProgress: false,
+  recoveryMode: false
 };
 
 const selectors = {
@@ -67,12 +99,23 @@ const selectors = {
   refreshApp: document.querySelector("#refresh-app"),
   contentVersion: document.querySelector("#content-version"),
   premiumStatus: document.querySelector("#premium-status"),
-  premiumCode: document.querySelector("#premium-code"),
-  unlockPremium: document.querySelector("#unlock-premium"),
+  syncStatus: document.querySelector("#sync-status"),
   installHelp: document.querySelector("#install-help"),
   attemptsList: document.querySelector("#attempts-list"),
   disclaimer: document.querySelector("#disclaimer"),
-  installButton: document.querySelector("#install-button")
+  installButton: document.querySelector("#install-button"),
+  authButton: document.querySelector("#auth-button"),
+  authModal: document.querySelector("#auth-modal"),
+  authTabs: document.querySelectorAll("[data-auth-tab]"),
+  loginPanel: document.querySelector("#auth-login-panel"),
+  signupPanel: document.querySelector("#auth-signup-panel"),
+  loginForm: document.querySelector("#login-form"),
+  signupForm: document.querySelector("#signup-form"),
+  googleLogin: document.querySelector("#google-login"),
+  googleSignup: document.querySelector("#google-signup"),
+  forgotPassword: document.querySelector("#forgot-password"),
+  accountContent: document.querySelector("#account-content"),
+  toast: document.querySelector("#toast")
 };
 
 document.addEventListener("DOMContentLoaded", init);
@@ -81,6 +124,9 @@ async function init() {
   bindEvents();
   await loadData();
   registerServiceWorker();
+  state.session = await getCurrentSession();
+  if (state.session) await hydrateSignedInState();
+  onAuthStateChange(handleAuthStateChange);
   renderAll();
 }
 
@@ -100,8 +146,18 @@ function bindEvents() {
   selectors.nextCard.addEventListener("click", nextFlashcard);
   selectors.guideSearch.addEventListener("input", renderGuide);
   selectors.installButton.addEventListener("click", installApp);
-  selectors.refreshApp.addEventListener("click", () => window.location.reload());
-  selectors.unlockPremium.addEventListener("click", unlockPremium);
+  selectors.authButton.addEventListener("click", () => state.session ? setRoute("account") : selectors.authModal.showModal());
+  selectors.authTabs.forEach((tab) => tab.addEventListener("click", () => setAuthTab(tab.dataset.authTab)));
+  selectors.loginForm.addEventListener("submit", handleEmailLogin);
+  selectors.signupForm.addEventListener("submit", handleEmailSignup);
+  selectors.googleLogin.addEventListener("click", handleGoogleLogin);
+  selectors.googleSignup.addEventListener("click", handleGoogleLogin);
+  selectors.forgotPassword.addEventListener("click", handlePasswordResetRequest);
+  window.addEventListener("online", () => {
+    updateNetworkBadge();
+    runSync();
+  });
+  window.addEventListener("offline", updateNetworkBadge);
 
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
@@ -117,9 +173,8 @@ async function loadData() {
     if (!response.ok) throw new Error("Questions file not available");
     const data = await response.json();
     const validation = validateData(data);
-    state.data = data;
-    state.progress.lastContentVersion = data.contentVersion;
-    window.ProPrepStorage.writeProgress(state.progress);
+    state.premiumQuestions = getCachedPremiumQuestions();
+    state.data = { ...data, questions: [...data.questions, ...state.premiumQuestions] };
 
     selectors.dataStatus.textContent = validation.errors.length
       ? `Učitano uz ${validation.errors.length} upozorenja`
@@ -149,34 +204,29 @@ function registerServiceWorker() {
     return;
   }
 
-  navigator.serviceWorker
-    .register("service-worker.js")
-    .then((registration) => {
-      registration.addEventListener("updatefound", () => {
-        const worker = registration.installing;
-        if (!worker) return;
-        worker.addEventListener("statechange", () => {
-          if (worker.state === "installed" && navigator.serviceWorker.controller) {
-            selectors.headerOfflineStatus.textContent = "Nova verzija dostupna";
-            selectors.headerOfflineStatus.className = "status-badge info";
-            selectors.refreshApp.classList.remove("hidden");
-          }
-        });
-      });
-      return navigator.serviceWorker.ready.then(() => registration);
-    })
-    .then(() => {
-      selectors.offlineStatus.textContent = "Spremno za offline";
-      selectors.headerOfflineStatus.textContent = "Offline spremno";
-      selectors.headerOfflineStatus.className = "status-badge success";
-      selectors.installHelp.textContent = "Aplikacija je cacheirana. Na mobitelu koristite opciju Add to Home Screen / Install.";
-    })
-    .catch(() => {
+  const markOfflineReady = () => {
+    selectors.offlineStatus.textContent = "Spremno za offline";
+    selectors.headerOfflineStatus.textContent = "Offline spremno";
+    selectors.headerOfflineStatus.className = "status-badge success";
+    selectors.installHelp.textContent = "Aplikacija je cacheirana. Na mobitelu koristite opciju Add to Home Screen / Install.";
+  };
+
+  const updateSW = registerSW({
+    onNeedRefresh() {
+      selectors.headerOfflineStatus.textContent = "Nova verzija dostupna";
+      selectors.headerOfflineStatus.className = "status-badge info";
+      selectors.refreshApp.classList.remove("hidden");
+      selectors.refreshApp.onclick = () => updateSW(true);
+    },
+    onOfflineReady: markOfflineReady,
+    onRegisterError() {
       selectors.offlineStatus.textContent = "Greška";
       selectors.headerOfflineStatus.textContent = "Offline greška";
       selectors.headerOfflineStatus.className = "status-badge warning";
-      selectors.installHelp.textContent = "Offline cache nije aktiviran. Pokušajte osvježiti stranicu.";
-    });
+    }
+  });
+  navigator.serviceWorker.ready.then(markOfflineReady).catch(() => {});
+  updateNetworkBadge();
 }
 
 function renderAll() {
@@ -189,6 +239,10 @@ function renderAll() {
   renderGuide();
   renderAttempts();
   renderPremium();
+  renderAccount();
+  renderAuthState();
+  const lastSyncAt = getLocalState().lastSyncAt;
+  selectors.syncStatus.textContent = lastSyncAt ? new Date(lastSyncAt).toLocaleString("bs-BA") : "Nije sinkronizirano";
   selectors.disclaimer.textContent = state.data.disclaimer || "";
   selectors.contentVersion.textContent = state.data.contentVersion || "N/A";
 }
@@ -198,21 +252,22 @@ function setRoute(route) {
   document.querySelectorAll(".nav-button").forEach((button) => {
     button.classList.toggle("active", button.dataset.route === route);
   });
+  if (route === "account") renderAccount();
 }
 
 function renderContentStatus() {
   const total = countQuestions();
   const target = state.data.contentTarget || 150;
   const free = getAccessibleQuestions(false).length;
-  const premium = state.data.questions.filter((question) => question.access === "premium").length;
-  const premiumState = state.progress.premiumUnlocked ? "premium otključan" : "premium zaključan";
+  const premium = state.premiumQuestions.length;
+  const premiumState = hasPremiumAccess() ? "premium aktivan" : "premium zaštićen";
   const percent = target ? Math.min(100, Math.round((total / target) * 100)) : 0;
 
   selectors.contentStatus.innerHTML = `
     <div>
       <span class="status-label">Sadržaj</span>
       <strong>${total}/${target} pitanja</strong>
-      <small>Free: ${free} dostupno · Premium: ${premium} dodatno · ${premiumState}</small>
+      <small>Free: ${free} dostupno · Premium: ${hasPremiumAccess() ? `${premium} učitano` : "zaštićen set"} · ${premiumState}</small>
     </div>
     <div class="status-meter"><span style="width: ${percent}%"></span></div>
   `;
@@ -243,8 +298,8 @@ function renderModes() {
       id: "exam",
       title: "Simulacija ispita",
       description: `${examConfig.questionCount} pitanja / ${examConfig.durationMinutes} min / prolaz ${examConfig.passingPercent}%.`,
-      meta: state.progress.premiumUnlocked ? "Premium otključano" : "Premium",
-      locked: !state.progress.premiumUnlocked,
+      meta: hasPremiumAccess() ? "Premium aktivan" : "Premium",
+      locked: !hasPremiumAccess(),
       action: startExam
     }
   ];
@@ -259,12 +314,12 @@ function renderModes() {
       <p>${mode.description}</p>
       ${mode.locked && mode.id === "exam" ? `<small class="card-note">Premium simulacija je zaključana u free verziji.</small>` : ""}
       <button class="${mode.locked ? "ghost-button" : "primary-button"}" type="button">
-        ${mode.locked && mode.id === "exam" ? "Otključaj u postavkama" : mode.locked ? "Nije dostupno" : "Pokreni"}
+        ${mode.locked && mode.id === "exam" ? "Provjeri na računu" : mode.locked ? "Nije dostupno" : "Pokreni"}
       </button>
     `;
     card.querySelector("button").addEventListener("click", () => {
       if (mode.locked && mode.id === "exam") {
-        setRoute("settings");
+        setRoute("account");
         return;
       }
       if (!mode.locked) mode.action();
@@ -277,21 +332,19 @@ function renderModules() {
   selectors.moduleGrid.innerHTML = "";
 
   if (!state.data.categories.length) {
-    selectors.moduleGrid.innerHTML = `<div class="empty-state">Nema učitanih oblasti. Provjerite <code>data/questions.json</code>.</div>`;
+    selectors.moduleGrid.innerHTML = `<div class="empty-state">Nema učitanih oblasti. Provjerite <code>public/data/questions.json</code>.</div>`;
     return;
   }
 
   state.data.categories.forEach((category) => {
     const questions = getAccessibleQuestions().filter((question) => question.categoryId === category.id);
-    const allInCategory = state.data.questions.filter((question) => question.categoryId === category.id);
-    const lockedCount = allInCategory.length - questions.length;
     const card = document.createElement("article");
     card.className = `module-card module-${category.id}`;
     card.innerHTML = `
       <span class="pill">${questions.length} dostupno</span>
       <h2>${category.title}</h2>
       <p>${category.description}</p>
-      ${lockedCount ? `<small class="card-note premium-note">Zaključano u free verziji: ${lockedCount} premium pitanja.</small>` : ""}
+      ${!hasPremiumAccess() ? `<small class="card-note premium-note">Premium pitanja se učitavaju tek nakon potvrde prava.</small>` : ""}
       <button class="primary-button" type="button" ${questions.length ? "" : "disabled"}>Započni modul</button>
     `;
     card.querySelector("button").addEventListener("click", () => {
@@ -341,8 +394,8 @@ function startWrongQuestionQuiz() {
 }
 
 function startExam() {
-  if (!state.progress.premiumUnlocked) {
-    setRoute("settings");
+  if (!hasPremiumAccess()) {
+    setRoute("account");
     return;
   }
 
@@ -452,23 +505,18 @@ function finishQuiz() {
     ...unansweredAnswers
   ];
 
-  state.progress.quizzesDone += 1;
-  state.progress.attempts = [
-    {
-      id: `attempt-${Date.now()}`,
-      date: new Date().toISOString(),
-      mode: state.activeMode,
-      label: getActiveModeLabel(),
-      total,
-      correct: state.currentCorrect,
-      percent,
-      passed,
-      wrongQuestionIds: wrongAnswers.map((answer) => answer.questionId)
-    },
-    ...state.progress.attempts
-  ].slice(0, MAX_ATTEMPTS);
-
-  window.ProPrepStorage.writeProgress(state.progress);
+  recordAttempt({
+    mode: state.activeMode,
+    label: getActiveModeLabel(),
+    total,
+    correct: state.currentCorrect,
+    percent,
+    passed,
+    wrongQuestionIds: wrongAnswers.map((answer) => answer.questionId),
+    contentVersion: state.data.contentVersion
+  });
+  state.progress = readProgress();
+  scheduleSync();
   renderStats();
   renderProgress();
   renderAttempts();
@@ -520,22 +568,14 @@ function retryActiveQuiz() {
 }
 
 function updateProgressForAnswer(question, isCorrect) {
-  if (!state.progress.categories[question.categoryId]) {
-    state.progress.categories[question.categoryId] = { total: 0, correct: 0 };
-  }
-
-  state.progress.answersTotal += 1;
-  state.progress.categories[question.categoryId].total += 1;
-
-  if (isCorrect) {
-    state.progress.answersCorrect += 1;
-    state.progress.categories[question.categoryId].correct += 1;
-    state.progress.wrongQuestionIds = state.progress.wrongQuestionIds.filter((id) => id !== question.id);
-  } else if (!state.progress.wrongQuestionIds.includes(question.id)) {
-    state.progress.wrongQuestionIds.push(question.id);
-  }
-
-  window.ProPrepStorage.writeProgress(state.progress);
+  recordAnswer({
+    questionId: question.id,
+    categoryId: question.categoryId,
+    isCorrect,
+    contentVersion: state.data.contentVersion
+  });
+  state.progress = readProgress();
+  scheduleSync();
   renderStats();
   renderProgress();
 }
@@ -573,11 +613,18 @@ function renderProgress() {
   });
 }
 
-function resetProgress() {
-  const confirmed = window.confirm("Resetovati sav lokalni napredak, historiju i premium demo unlock?");
+async function resetProgress() {
+  const scope = state.session ? "lokalni i sinkronizirani napredak" : "lokalni napredak i historiju";
+  const confirmed = window.confirm(`Resetovati sav ${scope}?`);
   if (!confirmed) return;
 
-  state.progress = window.ProPrepStorage.resetProgress();
+  try {
+    if (state.session) await resetCloudProgress(state.session);
+    state.progress = resetLocalProgress();
+    showToast("Napredak je resetovan.");
+  } catch (error) {
+    showToast(getFriendlyError(error), "error");
+  }
   renderAll();
 }
 
@@ -586,7 +633,7 @@ function renderFlashcard() {
   const card = cards[state.flashcardIndex] || cards[0];
   if (!card) {
     selectors.flashcardQuestion.textContent = "Nema dostupnih kartica.";
-    selectors.flashcardAnswer.textContent = "Dodajte kartice u data/questions.json.";
+    selectors.flashcardAnswer.textContent = "Dodajte kartice u public/data/questions.json.";
     selectors.flashcardCount.textContent = "0/0";
     return;
   }
@@ -649,18 +696,18 @@ function renderGuide() {
 
   searchableQuestions.slice(0, 20).forEach((question) => {
     const category = getCategory(question.categoryId);
-    const isLockedPremium = question.access === "premium" && !state.progress.premiumUnlocked;
+    const isLockedPremium = question.access === "premium" && !hasPremiumAccess();
     const questionItem = document.createElement("article");
     questionItem.className = `guide-item question-result ${isLockedPremium ? "locked-result" : ""}`;
     questionItem.innerHTML = `
       <span class="pill">${escapeHtml(category?.title || "Pitanje")}</span>
       ${question.access === "premium" ? `<span class="premium-label">Premium</span>` : ""}
       <h2>${escapeHtml(question.question)}</h2>
-      <p>${isLockedPremium ? "Ovo pitanje je dio premium seta. Demo otključavanje je dostupno u Postavkama." : escapeHtml(question.rationale)}</p>
-      ${isLockedPremium ? `<button class="ghost-button inline-cta" type="button">Otvori postavke</button>` : ""}
+      <p>${isLockedPremium ? "Ovo pitanje je dio premium seta. Prijavite se kako bi aplikacija provjerila pravo pristupa." : escapeHtml(question.rationale)}</p>
+      ${isLockedPremium ? `<button class="ghost-button inline-cta" type="button">Otvori račun</button>` : ""}
       <small>${escapeHtml(question.source)}</small>
     `;
-    questionItem.querySelector(".inline-cta")?.addEventListener("click", () => setRoute("settings"));
+    questionItem.querySelector(".inline-cta")?.addEventListener("click", () => setRoute("account"));
     selectors.guideList.appendChild(questionItem);
   });
 
@@ -712,26 +759,9 @@ function renderAttempts() {
 }
 
 function renderPremium() {
-  selectors.premiumStatus.textContent = state.progress.premiumUnlocked ? "Premium demo otključan" : "Free verzija";
-  selectors.premiumStatus.classList.toggle("premium-on", state.progress.premiumUnlocked);
+  selectors.premiumStatus.textContent = hasPremiumAccess() ? "Premium aktivan" : "Free verzija";
+  selectors.premiumStatus.classList.toggle("premium-on", hasPremiumAccess());
   renderContentStatus();
-}
-
-function unlockPremium() {
-  const code = selectors.premiumCode.value.trim().toUpperCase();
-  if (code !== PREMIUM_CODE) {
-    selectors.premiumStatus.textContent = "Kod nije ispravan";
-    selectors.premiumStatus.classList.remove("premium-on");
-    return;
-  }
-
-  state.progress.premiumUnlocked = true;
-  window.ProPrepStorage.writeProgress(state.progress);
-  selectors.premiumCode.value = "";
-  renderPremium();
-  renderModes();
-  renderModules();
-  renderFlashcard();
 }
 
 async function installApp() {
@@ -741,6 +771,223 @@ async function installApp() {
   await state.deferredInstallPrompt.userChoice;
   state.deferredInstallPrompt = null;
   selectors.installButton.classList.add("hidden");
+}
+
+function hasPremiumAccess() {
+  return Boolean(state.entitlement?.active);
+}
+
+function setAuthTab(tabName) {
+  selectors.authTabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.authTab === tabName));
+  selectors.loginPanel.classList.toggle("active", tabName === "login");
+  selectors.signupPanel.classList.toggle("active", tabName === "signup");
+}
+
+async function handleEmailLogin(event) {
+  event.preventDefault();
+  try {
+    const form = new FormData(event.currentTarget);
+    const { error } = await signInWithEmail(form.get("email"), form.get("password"));
+    if (error) throw error;
+    selectors.authModal.close();
+    showToast("Prijava je uspješna.");
+  } catch (error) {
+    showToast(getFriendlyError(error), "error");
+  }
+}
+
+async function handleEmailSignup(event) {
+  event.preventDefault();
+  try {
+    const form = new FormData(event.currentTarget);
+    const { error } = await signUpWithEmail(form.get("email"), form.get("password"));
+    if (error) throw error;
+    selectors.authModal.close();
+    showToast("Provjerite email i potvrdite registraciju.");
+  } catch (error) {
+    showToast(getFriendlyError(error), "error");
+  }
+}
+
+async function handleGoogleLogin() {
+  try {
+    const { error } = await signInWithGoogle();
+    if (error) throw error;
+  } catch (error) {
+    showToast(getFriendlyError(error), "error");
+  }
+}
+
+async function handlePasswordResetRequest() {
+  const email = selectors.loginForm.elements.email.value;
+  if (!email) return showToast("Prvo unesite email adresu.", "error");
+  try {
+    const { error } = await requestPasswordReset(email);
+    if (error) throw error;
+    selectors.authModal.close();
+    showToast("Poslan je link za promjenu lozinke.");
+  } catch (error) {
+    showToast(getFriendlyError(error), "error");
+  }
+}
+
+async function handleAuthStateChange(event, session) {
+  state.session = session;
+  if (event === "PASSWORD_RECOVERY") {
+    state.recoveryMode = true;
+    setRoute("account");
+    showToast("Unesite novu lozinku na stranici Račun.");
+  }
+  if (session) await hydrateSignedInState();
+  else {
+    state.account = null;
+    state.entitlement = { tier: "free", active: false };
+    state.premiumQuestions = [];
+    clearAccountCache();
+    if (state.data) state.data.questions = state.data.questions.filter((question) => question.access !== "premium");
+  }
+  state.progress = readProgress();
+  if (state.data) renderAll();
+}
+
+async function hydrateSignedInState() {
+  try {
+    state.account = await loadAccountData(state.session.user.id);
+    state.entitlement = getEffectiveEntitlement();
+    state.premiumQuestions = await loadPremiumQuestions(state.account?.entitlement, state.data?.contentVersion);
+    if (state.data) {
+      const freeQuestions = state.data.questions.filter((question) => question.access !== "premium");
+      state.data.questions = [...freeQuestions, ...state.premiumQuestions];
+    }
+    await runSync();
+  } catch (error) {
+    state.entitlement = getEffectiveEntitlement();
+    state.premiumQuestions = getCachedPremiumQuestions();
+    showToast(`Offline rad je nastavljen. ${getFriendlyError(error)}`, "error");
+  }
+}
+
+let syncTimer;
+function scheduleSync() {
+  if (!state.session || !navigator.onLine) return;
+  window.clearTimeout(syncTimer);
+  syncTimer = window.setTimeout(runSync, 900);
+}
+
+async function runSync() {
+  if (!state.session || !navigator.onLine || state.syncInProgress) return;
+  state.syncInProgress = true;
+  renderAccount();
+  try {
+    await syncProgress(state.session);
+    state.progress = readProgress();
+    renderStats();
+    renderProgress();
+    renderAttempts();
+  } catch (error) {
+    showToast(`Sinkronizacija će se pokušati ponovo. ${getFriendlyError(error)}`, "error");
+  } finally {
+    state.syncInProgress = false;
+    renderAccount();
+  }
+}
+
+function renderAuthState() {
+  selectors.authButton.textContent = state.session ? "Račun" : "Prijavi se";
+}
+
+function renderAccount() {
+  if (!selectors.accountContent) return;
+  if (!state.session) {
+    selectors.accountContent.innerHTML = `
+      <p class="eyebrow">Gost način rada</p>
+      <h1>Free aplikacija radi i bez računa.</h1>
+      <p class="muted">Prijavom dobivate sinkronizaciju napretka između uređaja i provjeru premium prava. Free pitanja ostaju dostupna offline.</p>
+      <button class="primary-button" id="account-login" type="button">Prijavi se ili registriraj</button>
+    `;
+    selectors.accountContent.querySelector("#account-login").addEventListener("click", () => selectors.authModal.showModal());
+    return;
+  }
+
+  const user = state.session.user;
+  const profile = state.account?.profile;
+  const provider = user.app_metadata?.provider === "google" ? "Google" : "Email i lozinka";
+  const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url;
+  const entitlement = state.account?.entitlement;
+  const expires = entitlement?.expires_at ? new Date(entitlement.expires_at).toLocaleDateString("bs-BA") : "Bez datuma isteka";
+  const lastSync = getLocalState().lastSyncAt;
+
+  selectors.accountContent.innerHTML = `
+    <div class="account-hero">
+      ${avatarUrl ? `<img class="account-avatar" src="${escapeHtml(avatarUrl)}" alt="">` : `<span class="account-avatar account-initial">${escapeHtml(user.email?.[0]?.toUpperCase() || "U")}</span>`}
+      <div><p class="eyebrow">Prijavljeni račun</p><h1>${escapeHtml(profile?.display_name || user.email)}</h1><p class="muted">${escapeHtml(user.email)}</p></div>
+    </div>
+    <div class="account-grid">
+      <article><span>Prijava</span><strong>${provider}</strong></article>
+      <article><span>Status</span><strong>${hasPremiumAccess() ? "Premium" : "Free"}</strong></article>
+      <article><span>Ističe</span><strong>${hasPremiumAccess() ? expires : "Nije primjenjivo"}</strong></article>
+      <article><span>Zadnji sync</span><strong>${lastSync ? new Date(lastSync).toLocaleString("bs-BA") : "Nije sinkronizirano"}</strong></article>
+    </div>
+    <form class="profile-form" id="profile-form">
+      <label>Prikazno ime<input class="search-input" name="displayName" value="${escapeHtml(profile?.display_name || "")}" placeholder="Vaše ime"></label>
+      <button class="ghost-button" type="submit">Sačuvaj ime</button>
+    </form>
+    ${provider === "Email i lozinka" || state.recoveryMode ? `
+      <form class="profile-form" id="password-form">
+        <label>Nova lozinka<input class="search-input" name="password" type="password" minlength="8" required></label>
+        <button class="ghost-button" type="submit">Promijeni lozinku</button>
+      </form>
+    ` : ""}
+    <div class="account-actions">
+      <button class="primary-button" id="manual-sync" type="button" ${state.syncInProgress ? "disabled" : ""}>${state.syncInProgress ? "Sinkroniziram..." : "Sinkroniziraj sada"}</button>
+      <button class="ghost-button" id="logout" type="button">Odjavi se</button>
+    </div>
+  `;
+
+  selectors.accountContent.querySelector("#manual-sync").addEventListener("click", runSync);
+  selectors.accountContent.querySelector("#logout").addEventListener("click", async () => {
+    const { error } = await signOut();
+    if (error) showToast(getFriendlyError(error), "error");
+  });
+  selectors.accountContent.querySelector("#profile-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const { error } = await updateProfile(new FormData(event.currentTarget).get("displayName"));
+    if (error) return showToast(getFriendlyError(error), "error");
+    state.account = await loadAccountData(user.id);
+    renderAccount();
+    showToast("Prikazno ime je sačuvano.");
+  });
+  selectors.accountContent.querySelector("#password-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const { error } = await updatePassword(new FormData(event.currentTarget).get("password"));
+    if (error) return showToast(getFriendlyError(error), "error");
+    state.recoveryMode = false;
+    renderAccount();
+    showToast("Lozinka je promijenjena.");
+  });
+}
+
+function updateNetworkBadge() {
+  if (!navigator.onLine) {
+    selectors.headerOfflineStatus.textContent = "Offline način";
+    selectors.headerOfflineStatus.className = "status-badge warning";
+  }
+}
+
+function showToast(message, type = "success") {
+  selectors.toast.textContent = message;
+  selectors.toast.className = `toast ${type}`;
+  window.setTimeout(() => selectors.toast.classList.add("hidden"), 4200);
+}
+
+function getFriendlyError(error) {
+  const message = String(error?.message || error || "");
+  if (message.includes("Invalid login credentials")) return "Email ili lozinka nisu ispravni.";
+  if (message.includes("Email not confirmed")) return "Prvo potvrdite email adresu.";
+  if (message.includes("already registered")) return "Račun s ovim emailom već postoji.";
+  if (message.includes("Supabase još nije konfiguriran")) return message;
+  if (message.includes("Failed to fetch")) return "Trenutno nema veze sa serverom.";
+  return "Akcija trenutno nije uspjela. Pokušajte ponovo.";
 }
 
 function startExamTimer(seconds) {
@@ -779,16 +1026,16 @@ function getCategory(categoryId) {
   return state.data.categories.find((category) => category.id === categoryId);
 }
 
-function getAccessibleQuestions(includePremium = state.progress.premiumUnlocked) {
+function getAccessibleQuestions(includePremium = hasPremiumAccess()) {
   return state.data.questions.filter((question) => includePremium || question.access !== "premium");
 }
 
 function getAccessibleFlashcards() {
-  return state.data.flashcards.filter((card) => state.progress.premiumUnlocked || card.access !== "premium");
+  return state.data.flashcards.filter((card) => hasPremiumAccess() || card.access !== "premium");
 }
 
 function canAccess(question) {
-  return state.progress.premiumUnlocked || question.access !== "premium";
+  return hasPremiumAccess() || question.access !== "premium";
 }
 
 function getFocusArea() {

@@ -95,18 +95,6 @@
       "keywords": ["akt", "kancelarijsko poslovanje", "službena radnja"]
     },
     {
-      "id": "kanc-002",
-      "categoryId": "kanc",
-      "question": "U omot koje boje se ulažu prvostepeni predmeti upravnog postupka po zahtjevu stranke?",
-      "options": ["Plave boje", "Bijele boje", "Zelene boje", "Žute boje"],
-      "answerIndex": 2,
-      "rationale": "Predmeti pokrenuti po zahtjevu stranke ulažu se u zeleni omot.",
-      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
-      "difficulty": "medium",
-      "access": "premium",
-      "keywords": ["omot", "zelena boja", "upravni postupak", "stranka"]
-    },
-    {
       "id": "kanc-003",
       "categoryId": "kanc",
       "question": "Šta označava skraćenica a/a?",
@@ -119,18 +107,6 @@
       "keywords": ["a/a", "ad acta", "arhiva", "predmet"]
     },
     {
-      "id": "car-001",
-      "categoryId": "carine",
-      "question": "Koliko iznosi jedinstvena stopa carine ad valorem prema carinskim propisima BiH?",
-      "options": ["17%", "5%", "10%", "12%"],
-      "answerIndex": 2,
-      "rationale": "Jedinstvena carinska stopa u ovom kontekstu iznosi 10% ad valorem.",
-      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
-      "difficulty": "medium",
-      "access": "premium",
-      "keywords": ["carina", "ad valorem", "10%", "stopa"]
-    },
-    {
       "id": "car-002",
       "categoryId": "carine",
       "question": "Koji dokument predstavlja međunarodni carinski dokument za privremeni uvoz uz oslobađanje od uvoznih dažbina?",
@@ -141,18 +117,6 @@
       "difficulty": "medium",
       "access": "free",
       "keywords": ["ata", "karnet", "privremeni uvoz", "carinski dokument"]
-    },
-    {
-      "id": "car-003",
-      "categoryId": "carine",
-      "question": "Šta označava skraćenica NCTS?",
-      "options": ["Nacionalni carinski tarifni sistem", "Novi kompjuterizovani tranzitni sistem", "Nadzor carinskih teretnih stanica", "Nacrt carinske tehnološke saradnje"],
-      "answerIndex": 1,
-      "rationale": "NCTS je novi kompjuterizovani tranzitni sistem.",
-      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
-      "difficulty": "hard",
-      "access": "premium",
-      "keywords": ["ncts", "tranzit", "kompjuterizovani sistem"]
     }
   ],
   "flashcards": [
