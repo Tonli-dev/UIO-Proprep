@@ -96,6 +96,7 @@ export async function loadPremiumQuestions(entitlement, contentVersion) {
   const questions = (data || []).map((question) => ({
     id: question.id,
     categoryId: question.category_id,
+    questionType: "multiple-choice",
     question: question.question,
     options: question.options,
     answerIndex: question.answer_index,

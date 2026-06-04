@@ -369,6 +369,30 @@ button {
   gap: 0.8rem;
 }
 
+.recall-card {
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 12rem),
+    linear-gradient(135deg, #eff6ff, #ffffff);
+}
+
+.recall-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.self-assessment {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
 .progress-item {
   display: grid;
   gap: 0.35rem;
@@ -1149,7 +1173,8 @@ button {
   .mode-grid,
   .result-details,
   .install-grid,
-  .account-grid {
+  .account-grid,
+  .self-assessment {
     grid-template-columns: 1fr;
   }
 

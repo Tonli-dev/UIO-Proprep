@@ -4,3 +4,6 @@ dist/
 build/
 .env
 supabase/functions/.env
+.vite/
+__pycache__/
+*.pyc

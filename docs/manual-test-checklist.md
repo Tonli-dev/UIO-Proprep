@@ -23,13 +23,15 @@ Otvoriti `http://localhost:5173`.
 
 ## Dashboard
 
-- Prikazuje broj pitanja i cilj `150`.
+- Prikazuje broj pitanja i cilj `180`.
 - Prikazuje free/premium status sadržaja.
 - Statistike su `0` na čistom browser storage-u.
 - Reset napretka gosta briše lokalnu statistiku i historiju.
 
 ## Kvizovi
 
+- Direktno pitanje prvo prikazuje poziv na prisjećanje, zatim tačan odgovor i samoprocjenu.
+- Pitanje s ponuđenim odgovorima prikazuje sve odgovore iz izvornog dokumenta.
 - Kviz po oblasti se pokreće za svaku oblast sa dostupnim free pitanjima.
 - “Sva dostupna pitanja” miješa pitanja iz više oblasti.
 - “Samo pogrešna pitanja” je zaključano dok ne postoji pogrešan odgovor.

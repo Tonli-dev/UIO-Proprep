@@ -28,6 +28,7 @@ npm run build
 npm run preview
 npm test
 npm run validate:content
+npm run import:questions -- "/putanja/do/PITANJA-SSS-OBJAVA-KONACNO.docx"
 ```
 
 ## Sadržaj
@@ -36,6 +37,16 @@ npm run validate:content
 - Premium pitanja: `public.premium_questions` u Supabaseu
 - Početni premium seed i RLS: `supabase/migrations/20260604120000_auth_sync_and_premium.sql`
 - Šablon pitanja: `data/question-template.json`
+- Ponovljivi DOCX importer: `scripts/import-questions-docx.py`
+
+Kompletni dostavljeni SSS set sadrži 180 pitanja. Importer čuva direktne odgovore bez izmišljanja ponuđenih odgovora:
+
+```bash
+npm run import:questions -- "/putanja/do/PITANJA-SSS-OBJAVA-KONACNO.docx"
+npm run validate:content
+```
+
+Rezultat i poznate nejasnoće izvornog dokumenta opisani su u `docs/content-import-report.md`.
 
 Workflow za free pitanje:
 

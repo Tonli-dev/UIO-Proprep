@@ -8,9 +8,11 @@ Svako pitanje mora imati:
 
 - `id`: stabilan i jedinstven ID, npr. `uio-004`, `kanc-010`, `car-021`
 - `categoryId`: jedna od postojećih oblasti: `uio`, `kanc`, `carine`
+- `questionType`: `direct` ili `multiple-choice`
 - `question`: jasan tekst pitanja
-- `options`: tačno 4 ponuđena odgovora
-- `answerIndex`: indeks tačnog odgovora, od `0` do `3`
+- `answer`: obavezan tačan odgovor za `direct` pitanje
+- `options`: najmanje 2 ponuđena odgovora za `multiple-choice` pitanje
+- `answerIndex`: indeks tačnog odgovora za `multiple-choice` pitanje
 - `rationale`: kratko objašnjenje tačnog odgovora
 - `source`: propis, dokument, član, stranica ili napomena za provjeru
 - `difficulty`: `easy`, `medium` ili `hard`
@@ -20,6 +22,7 @@ Svako pitanje mora imati:
 ## Pravila kvaliteta
 
 - Ne unositi pitanje bez izvora ili jasne napomene gdje se provjerava.
+- Ne izmišljati ponuđene odgovore kada izvor daje samo pitanje i tačan odgovor; koristiti `direct` tip.
 - Ne koristiti dva ista ponuđena odgovora u istom pitanju.
 - Ne koristiti formulacije koje imaju više mogućih tačnih odgovora.
 - Distraktori treba da budu uvjerljivi, ali nedvosmisleno netačni.
@@ -30,9 +33,15 @@ Svako pitanje mora imati:
 
 1. Kopirati `data/question-template.json`.
 2. Umetnuti objekat u `questions` niz u `public/data/questions.json`.
-3. Promijeniti `id`, `categoryId`, tekst, odgovore, `answerIndex`, `rationale`, `source`, `difficulty`, `access` i `keywords`.
+3. Promijeniti `id`, `categoryId`, `questionType`, tekst, odgovor ili ponuđene odgovore, `rationale`, `source`, `difficulty`, `access` i `keywords`.
 4. Pokrenuti `node scripts/validate-content.mjs`.
 5. Pokrenuti lokalni server i ručno testirati pitanje u kvizu i pretrazi.
+
+Za ponovni uvoz kompletnog DOCX seta:
+
+```bash
+python3 scripts/import-questions-docx.py "/putanja/do/PITANJA-SSS-OBJAVA-KONACNO.docx"
+```
 
 ## Preporučena raspodjela
 

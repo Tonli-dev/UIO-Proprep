@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "validate:content": "node scripts/validate-content.mjs"
+    "validate:content": "node scripts/validate-content.mjs",
+    "import:questions": "python3 scripts/import-questions-docx.py"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4"

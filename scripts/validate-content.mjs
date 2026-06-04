@@ -9,6 +9,7 @@ const validAccess = new Set(["free", "premium"]);
 const categoryIds = new Set(data.categories.map((category) => category.id));
 const questionIds = new Set();
 const questionTexts = new Map();
+const validQuestionTypes = new Set(["direct", "multiple-choice"]);
 
 function isBlank(value) {
   return typeof value !== "string" || value.trim().length === 0;
@@ -41,13 +42,19 @@ data.questions.forEach((question, index) => {
   requireText(question.source, `${label}: source`);
 
   const normalizedQuestion = normalize(question.question);
-  if (questionTexts.has(normalizedQuestion)) {
-    errors.push(`${label}: duplicate question text also used by ${questionTexts.get(normalizedQuestion)}.`);
-  }
+  if (questionTexts.has(normalizedQuestion)) warnings.push(`${label}: duplicate question text also used by ${questionTexts.get(normalizedQuestion)}.`);
   questionTexts.set(normalizedQuestion, label);
 
-  if (!Array.isArray(question.options) || question.options.length !== 4) {
-    errors.push(`${label}: options must contain exactly 4 answers.`);
+  const questionType = question.questionType || "multiple-choice";
+  if (!validQuestionTypes.has(questionType)) errors.push(`${label}: invalid questionType.`);
+
+  if (questionType === "direct") {
+    requireText(question.answer, `${label}: answer`);
+    if (question.options !== undefined || question.answerIndex !== undefined) {
+      errors.push(`${label}: direct question must not define options or answerIndex.`);
+    }
+  } else if (!Array.isArray(question.options) || question.options.length < 2) {
+    errors.push(`${label}: multiple-choice options must contain at least 2 answers.`);
   } else {
     const normalizedOptions = new Set();
     question.options.forEach((option, optionIndex) => {
@@ -60,10 +67,10 @@ data.questions.forEach((question, index) => {
     });
   }
 
-  if (!Number.isInteger(question.answerIndex) || question.answerIndex < 0 || question.answerIndex > 3) {
-    errors.push(`${label}: answerIndex must be 0-3.`);
-  } else if (!question.options?.[question.answerIndex]) {
-    errors.push(`${label}: answerIndex does not point to an existing answer.`);
+  if (questionType === "multiple-choice") {
+    if (!Number.isInteger(question.answerIndex) || question.answerIndex < 0 || question.answerIndex >= question.options?.length) {
+      errors.push(`${label}: answerIndex must point to an existing answer.`);
+    }
   }
 
   if (!validDifficulties.has(question.difficulty)) errors.push(`${label}: invalid difficulty.`);

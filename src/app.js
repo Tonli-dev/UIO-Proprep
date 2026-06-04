@@ -422,6 +422,19 @@ function renderQuestion() {
   selectors.questionText.textContent = question.question;
   selectors.answers.innerHTML = "";
 
+  if (isDirectQuestion(question)) {
+    const prompt = document.createElement("div");
+    prompt.className = "recall-card";
+    prompt.innerHTML = `
+      <span class="pill">Aktivno prisjećanje</span>
+      <p>Prisjeti se odgovora prije nego što ga otkriješ. Nakon toga iskreno označi da li si znao/la odgovor.</p>
+      <button class="primary-button reveal-answer-button" type="button">Prikaži tačan odgovor</button>
+    `;
+    prompt.querySelector("button").addEventListener("click", () => revealDirectAnswer(question));
+    selectors.answers.appendChild(prompt);
+    return;
+  }
+
   question.options.forEach((option, index) => {
     const button = document.createElement("button");
     button.className = "answer-button";
@@ -433,6 +446,57 @@ function renderQuestion() {
     button.addEventListener("click", () => selectAnswer(index));
     selectors.answers.appendChild(button);
   });
+}
+
+function revealDirectAnswer(question) {
+  selectors.feedback.className = "feedback";
+  selectors.feedback.innerHTML = `
+    <div class="feedback-icon">i</div>
+    <div>
+      <h3>Tačan odgovor</h3>
+      <p>${escapeHtml(question.answer)}</p>
+      <small>${escapeHtml(question.source)}</small>
+    </div>
+  `;
+  selectors.answers.innerHTML = `
+    <div class="self-assessment">
+      <button class="answer-button self-assess-button review" type="button">
+        <span class="answer-text">Nisam znao/la, ponovi pitanje</span>
+        <span class="answer-icon" aria-hidden="true">×</span>
+      </button>
+      <button class="answer-button self-assess-button known" type="button">
+        <span class="answer-text">Znao/la sam odgovor</span>
+        <span class="answer-icon" aria-hidden="true">✓</span>
+      </button>
+    </div>
+  `;
+  selectors.answers.querySelector(".review").addEventListener("click", () => assessDirectAnswer(false));
+  selectors.answers.querySelector(".known").addEventListener("click", () => assessDirectAnswer(true));
+}
+
+function assessDirectAnswer(isCorrect) {
+  if (state.selectedAnswer !== null) return;
+
+  const question = getCurrentQuestion();
+  state.selectedAnswer = isCorrect ? "known" : "review";
+  if (isCorrect) state.currentCorrect += 1;
+  state.activeAnswers.push({
+    questionId: question.id,
+    categoryId: question.categoryId,
+    selectedIndex: null,
+    correctIndex: null,
+    isCorrect
+  });
+
+  [...selectors.answers.querySelectorAll(".self-assess-button")].forEach((button) => {
+    button.disabled = true;
+    if (button.classList.contains(isCorrect ? "known" : "review")) {
+      button.classList.add(isCorrect ? "correct" : "incorrect");
+    }
+  });
+  selectors.feedback.querySelector("h3").textContent = isCorrect ? "Odlično, odgovor je usvojen" : "Dodano za ponavljanje";
+  selectors.nextQuestion.disabled = false;
+  updateProgressForAnswer(question, isCorrect);
 }
 
 function selectAnswer(answerIndex) {
@@ -672,7 +736,8 @@ function renderGuide() {
   const searchableQuestions = state.data.questions.filter((question) => {
     const content = [
       question.question,
-      question.options.join(" "),
+      question.options?.join(" ") || "",
+      question.answer || "",
       question.rationale,
       question.source,
       question.keywords?.join(" ")
@@ -730,7 +795,7 @@ function renderWrongList(wrongAnswers) {
     item.className = "wrong-item";
     item.innerHTML = `
       <h3>${escapeHtml(question.question)}</h3>
-      <p><strong>Tačno:</strong> ${escapeHtml(question.options[question.answerIndex])}</p>
+      <p><strong>Tačno:</strong> ${escapeHtml(getCorrectAnswer(question))}</p>
       <small>${escapeHtml(question.rationale)}</small>
     `;
     selectors.wrongList.appendChild(item);
@@ -1031,7 +1096,19 @@ function getAccessibleQuestions(includePremium = hasPremiumAccess()) {
 }
 
 function getAccessibleFlashcards() {
-  return state.data.flashcards.filter((card) => hasPremiumAccess() || card.access !== "premium");
+  const explicitCards = state.data.flashcards.filter((card) => hasPremiumAccess() || card.access !== "premium");
+  const explicitQuestionIds = new Set(explicitCards.map((card) => card.questionId).filter(Boolean));
+  const generatedCards = getAccessibleQuestions()
+    .filter((question) => !explicitQuestionIds.has(question.id))
+    .map((question) => ({
+      id: `card-${question.id}`,
+      questionId: question.id,
+      categoryId: question.categoryId,
+      question: question.question,
+      answer: getCorrectAnswer(question),
+      access: question.access
+    }));
+  return [...explicitCards, ...generatedCards];
 }
 
 function canAccess(question) {
@@ -1089,14 +1166,28 @@ function validateData(data) {
     if (ids.has(question.id)) errors.push(`Dupli id pitanja: ${question.id}.`);
     ids.add(question.id);
     if (!categoryIds.has(question.categoryId)) errors.push(`${question.id} ima nepoznatu kategoriju.`);
-    if (!Array.isArray(question.options) || question.options.length !== 4) errors.push(`${question.id} mora imati tačno 4 odgovora.`);
-    if (!Number.isInteger(question.answerIndex) || question.answerIndex < 0 || question.answerIndex > 3) errors.push(`${question.id} ima nevalidan answerIndex.`);
+    if (isDirectQuestion(question)) {
+      if (!question.answer) errors.push(`${question.id} nema direktni odgovor.`);
+    } else {
+      if (!Array.isArray(question.options) || question.options.length < 2) errors.push(`${question.id} mora imati najmanje 2 odgovora.`);
+      if (!Number.isInteger(question.answerIndex) || question.answerIndex < 0 || question.answerIndex >= question.options?.length) {
+        errors.push(`${question.id} ima nevalidan answerIndex.`);
+      }
+    }
     if (!question.rationale) errors.push(`${question.id} nema objašnjenje.`);
     if (!question.source) errors.push(`${question.id} nema izvor.`);
     if (!validDifficulties.has(question.difficulty)) errors.push(`${question.id} ima nevalidnu težinu.`);
   });
 
   return { errors };
+}
+
+function isDirectQuestion(question) {
+  return question.questionType === "direct" || (!Array.isArray(question.options) && Boolean(question.answer));
+}
+
+function getCorrectAnswer(question) {
+  return isDirectQuestion(question) ? question.answer : question.options?.[question.answerIndex] || "";
 }
 
 function shuffle(items) {
