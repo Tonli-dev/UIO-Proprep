@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="UIO ProPrep">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="60" x2="430" y2="452" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1e3a8a"/>
+      <stop offset="1" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path d="M144 146h224v54H144v-54Zm0 83h224v54H144v-54Zm0 83h142v54H144v-54Z" fill="#fff"/>
+  <circle cx="358" cy="344" r="46" fill="#fbbf24"/>
+  <path d="m336 344 16 16 31-38" fill="none" stroke="#0f172a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

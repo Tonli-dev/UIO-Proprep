@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1d4ed8">
+  <meta name="description" content="UIO ProPrep je PWA aplikacija za vježbu pitanja za stručni ispit.">
+  <title>UIO ProPrep</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/icon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#dashboard" aria-label="UIO ProPrep početna">
+      <span class="brand-mark">U</span>
+      <span>
+        <strong>UIO ProPrep</strong>
+        <small>Offline priprema za stručni ispit</small>
+      </span>
+    </a>
+    <div class="header-actions">
+      <span class="status-badge" id="header-offline-status">Provjera offline...</span>
+      <button class="ghost-button hidden" id="refresh-app" type="button">Osvježi verziju</button>
+      <button class="install-button hidden" id="install-button" type="button">Instaliraj</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <nav class="sidebar" aria-label="Glavna navigacija">
+      <button class="nav-button active" data-route="dashboard" type="button">Nadzorna ploča</button>
+      <button class="nav-button" data-route="quiz" type="button">Kvizovi</button>
+      <button class="nav-button" data-route="flashcards" type="button">Kartice</button>
+      <button class="nav-button" data-route="guide" type="button">Priručnik</button>
+      <button class="nav-button" data-route="settings" type="button">Postavke</button>
+    </nav>
+
+    <main class="content">
+      <section class="view active" id="view-dashboard">
+        <div class="hero-card">
+          <div>
+            <p class="eyebrow">MVP verzija</p>
+            <h1>Uči pametnije, čak i bez interneta.</h1>
+            <p>Prva verzija koristi lokalna pitanja, lokalni napredak i PWA instalaciju na mobilni uređaj.</p>
+          </div>
+          <div class="hero-actions">
+            <div class="content-status" id="content-status" aria-live="polite"></div>
+            <button class="primary-button" data-route="quiz" type="button">Pokreni kviz</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span>Urađeni kvizovi</span>
+            <strong id="stat-quizzes">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Ukupno odgovora</span>
+            <strong id="stat-answers">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Tačnost</span>
+            <strong id="stat-accuracy">0%</strong>
+          </article>
+          <article class="stat-card">
+            <span>Najslabija oblast</span>
+            <strong id="stat-focus">Nema podataka</strong>
+          </article>
+        </div>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Napredak po oblastima</h2>
+            <button class="ghost-button" id="reset-progress" type="button">Resetuj napredak</button>
+          </div>
+          <div class="progress-list" id="progress-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-quiz">
+        <div class="panel" id="quiz-lobby">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Vježba</p>
+              <h1>Izaberi režim učenja</h1>
+            </div>
+          </div>
+          <div class="mode-grid" id="mode-grid"></div>
+        </div>
+
+        <div class="panel" id="module-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Oblasti</p>
+              <h1>Vježbaj po modulu</h1>
+            </div>
+          </div>
+          <div class="module-grid" id="module-grid"></div>
+        </div>
+
+        <div class="panel hidden" id="quiz-player">
+          <div class="quiz-topbar">
+            <span class="pill" id="quiz-category">Oblast</span>
+            <div class="quiz-meta">
+              <span id="quiz-timer" class="quiz-timer hidden">45:00</span>
+              <span id="quiz-counter">Pitanje 1/1</span>
+            </div>
+          </div>
+          <div class="progress-track">
+            <span id="quiz-progress"></span>
+          </div>
+          <h2 id="question-text"></h2>
+          <div class="answers" id="answers"></div>
+          <div class="feedback hidden" id="feedback"></div>
+          <div class="quiz-actions">
+            <button class="ghost-button" id="exit-quiz" type="button">Nazad</button>
+            <button class="primary-button" id="next-question" type="button" disabled>Sljedeće pitanje</button>
+          </div>
+        </div>
+
+        <div class="panel hidden" id="quiz-results">
+          <p class="eyebrow">Rezultat</p>
+          <div class="result-hero">
+            <div>
+              <h1 id="result-title">Kviz završen</h1>
+              <p id="result-summary"></p>
+            </div>
+            <div class="result-score" id="result-score">0%</div>
+          </div>
+          <span class="result-badge" id="result-badge">Status</span>
+          <div class="result-details" id="result-details"></div>
+          <div class="wrong-list" id="wrong-list"></div>
+          <div class="quiz-actions">
+            <button class="ghost-button" id="back-to-lobby" type="button">Izbor oblasti</button>
+            <button class="ghost-button hidden" id="retry-wrong" type="button">Ponovi pogrešna</button>
+            <button class="primary-button" id="retry-quiz" type="button">Ponovi kviz</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-flashcards">
+        <div class="panel">
+          <p class="eyebrow">Aktivno prisjećanje</p>
+          <h1>Kartice za brzo ponavljanje</h1>
+          <button class="flashcard" id="flashcard" type="button" aria-live="polite">
+            <span class="flashcard-inner" id="flashcard-inner">
+              <span class="flashcard-face flashcard-front">
+                <span class="flashcard-meta">
+                  <span>Pitanje</span>
+                  <span class="mini-pill" id="flashcard-category">Oblast</span>
+                </span>
+                <strong id="flashcard-question"></strong>
+                <small>↻ Dodirni za odgovor</small>
+              </span>
+              <span class="flashcard-face flashcard-back">
+                <span class="flashcard-meta">
+                  <span>Odgovor</span>
+                  <span class="mini-pill dark">Rješenje</span>
+                </span>
+                <strong id="flashcard-answer"></strong>
+                <small>↻ Dodirni za pitanje</small>
+              </span>
+            </span>
+          </button>
+          <div class="flashcard-actions">
+            <button class="ghost-button" id="previous-card" type="button">Prethodna</button>
+            <span id="flashcard-count">1/1</span>
+            <button class="ghost-button" id="next-card" type="button">Sljedeća</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-guide">
+        <div class="panel">
+          <p class="eyebrow">Priručnik</p>
+          <h1>Pretraga pojmova</h1>
+          <input class="search-input" id="guide-search" type="search" placeholder="Pretraži: pečat, carina, zaposlenik...">
+          <div class="guide-list" id="guide-list"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="panel">
+          <p class="eyebrow">PWA</p>
+          <h1>Postavke i status</h1>
+          <ul class="settings-list">
+            <li><span>Status podataka</span><strong id="data-status">Učitavanje...</strong></li>
+            <li><span>Offline podrška</span><strong id="offline-status">Provjera...</strong></li>
+            <li><span>Verzija sadržaja</span><strong id="content-version">N/A</strong></li>
+            <li><span>Premium status</span><strong id="premium-status">Free verzija</strong></li>
+            <li><span>Verzija</span><strong>0.1.0</strong></li>
+          </ul>
+          <p class="muted">Ova verzija nema bazu podataka. Pitanja su lokalni JSON, a napredak se čuva na uređaju.</p>
+        </div>
+
+        <div class="panel">
+          <p class="eyebrow">Premium MVP</p>
+          <h1>Demo otključavanje</h1>
+          <p class="muted">Ovo nije prava zaštita plaćenog sadržaja. Služi samo za validaciju ponude prije backend-a i naplate.</p>
+          <div class="activation-row">
+            <input class="search-input" id="premium-code" type="text" placeholder="Demo kod: UIO-PREMIUM-2026">
+            <button class="primary-button" id="unlock-premium" type="button">Otključaj</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="eyebrow">Instalacija</p>
+          <h1>Offline korištenje</h1>
+          <p id="install-help" class="muted">Provjeravam offline podršku...</p>
+          <div class="install-grid">
+            <article class="install-card">
+              <strong>Android</strong>
+              <span>Chrome meni → Install app / Add to Home screen.</span>
+            </article>
+            <article class="install-card">
+              <strong>iPhone</strong>
+              <span>Safari → Share → Add to Home Screen.</span>
+            </article>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="eyebrow">Historija</p>
+          <h1>Zadnji pokušaji</h1>
+          <div class="attempts-list" id="attempts-list"></div>
+        </div>
+
+        <div class="panel legal-panel">
+          <p class="eyebrow">Napomena</p>
+          <p id="disclaimer" class="muted"></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

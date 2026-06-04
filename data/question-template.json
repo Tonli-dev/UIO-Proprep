@@ -1,0 +1,17 @@
+{
+  "id": "uio-000",
+  "categoryId": "uio",
+  "question": "Tekst pitanja ide ovdje?",
+  "options": [
+    "Prvi ponuđeni odgovor",
+    "Drugi ponuđeni odgovor",
+    "Treći ponuđeni odgovor",
+    "Četvrti ponuđeni odgovor"
+  ],
+  "answerIndex": 0,
+  "rationale": "Kratko objašnjenje zašto je tačan odgovor ispravan.",
+  "source": "Naziv propisa/dokumenta, član ili stranica. Ne ostavljati 'provjeriti' u produkciji.",
+  "difficulty": "easy",
+  "access": "free",
+  "keywords": ["uio", "ključni pojam"]
+}

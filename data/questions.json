@@ -1,0 +1,205 @@
+{
+  "contentVersion": "2026.06.04-mvp",
+  "contentTarget": 150,
+  "exam": {
+    "questionCount": 30,
+    "durationMinutes": 45,
+    "passingPercent": 70
+  },
+  "schemaDocumentation": {
+    "questionExample": {
+      "id": "uio-000",
+      "categoryId": "uio",
+      "question": "Tekst pitanja?",
+      "options": ["Odgovor A", "Odgovor B", "Odgovor C", "Odgovor D"],
+      "answerIndex": 0,
+      "rationale": "Objašnjenje tačnog odgovora.",
+      "source": "Propis/dokument/član/stranica.",
+      "difficulty": "easy",
+      "access": "free",
+      "keywords": ["pojam"]
+    },
+    "categoryExamples": {
+      "uio": "Organizacija UIO, sjedište, status zaposlenih.",
+      "kanc": "Kancelarijsko poslovanje, akti, pečat, arhiva.",
+      "carine": "Carinski postupci, dokumenti, stope i skraćenice."
+    }
+  },
+  "categories": [
+    {
+      "id": "uio",
+      "title": "Organizacija UIO",
+      "description": "Struktura Uprave, sjedište, status zaposlenih i službene obaveze.",
+      "color": "blue"
+    },
+    {
+      "id": "kanc",
+      "title": "Kancelarijsko poslovanje",
+      "description": "Akt, predmet, arhiviranje, pečat i administrativne oznake.",
+      "color": "green"
+    },
+    {
+      "id": "carine",
+      "title": "Carinski postupci",
+      "description": "Carinske stope, skladišta, ATA, TIR, NCTS i PDV.",
+      "color": "purple"
+    }
+  ],
+  "questions": [
+    {
+      "id": "uio-001",
+      "categoryId": "uio",
+      "question": "Kako je strukturalno organizovana Uprava za indirektno oporezivanje (UIO)?",
+      "options": ["Glavna kancelarija i 4 regionalna centra", "Sjedište Uprave i 3 regionalne ispostave", "Direktorat i 5 carinskih zona", "Ministarstvo finansija i entitetske uprave"],
+      "answerIndex": 0,
+      "rationale": "Strukturu čine Glavna kancelarija i četiri regionalna centra.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "easy",
+      "access": "free",
+      "keywords": ["uio", "struktura", "regionalni centri", "glavna kancelarija"]
+    },
+    {
+      "id": "uio-002",
+      "categoryId": "uio",
+      "question": "Gdje se nalazi sjedište Uprave za indirektno oporezivanje?",
+      "options": ["Sarajevo", "Mostar", "Banja Luka", "Tuzla"],
+      "answerIndex": 2,
+      "rationale": "Sjedište UIO je u Banjoj Luci.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "easy",
+      "access": "free",
+      "keywords": ["uio", "sjedište", "banja luka"]
+    },
+    {
+      "id": "uio-003",
+      "categoryId": "uio",
+      "question": "Koji status stiče zaposleni koji zasnuje radni odnos u UIO sa srednjom stručnom spremom?",
+      "options": ["Državni službenik", "Pripravnik", "Zaposlenik", "Ovlašteni inspektor"],
+      "answerIndex": 2,
+      "rationale": "Lice sa SSS u pravilu stiče status zaposlenika.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "medium",
+      "access": "free",
+      "keywords": ["zaposlenik", "sss", "radni odnos", "uio"]
+    },
+    {
+      "id": "kanc-001",
+      "categoryId": "kanc",
+      "question": "Šta se u kancelarijskom poslovanju definiše kao akt?",
+      "options": ["Fizički predmet koji se prilaže u kovertu", "Pisani sastav kojim se pokreće, mijenja ili prekida službena radnja", "Uvezana knjiga sa tvrdim koricama", "Arhivska istorijska građa"],
+      "answerIndex": 1,
+      "rationale": "Akt je osnovni pisani podnesak ili dopis kojim se pokreće službena radnja.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "easy",
+      "access": "free",
+      "keywords": ["akt", "kancelarijsko poslovanje", "službena radnja"]
+    },
+    {
+      "id": "kanc-002",
+      "categoryId": "kanc",
+      "question": "U omot koje boje se ulažu prvostepeni predmeti upravnog postupka po zahtjevu stranke?",
+      "options": ["Plave boje", "Bijele boje", "Zelene boje", "Žute boje"],
+      "answerIndex": 2,
+      "rationale": "Predmeti pokrenuti po zahtjevu stranke ulažu se u zeleni omot.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "medium",
+      "access": "premium",
+      "keywords": ["omot", "zelena boja", "upravni postupak", "stranka"]
+    },
+    {
+      "id": "kanc-003",
+      "categoryId": "kanc",
+      "question": "Šta označava skraćenica a/a?",
+      "options": ["Aktivirati akt", "Arhivirati predmet", "Poslati autoru", "Hitna dostava"],
+      "answerIndex": 1,
+      "rationale": "Oznaka a/a dolazi od ad acta i označava odlaganje u arhivu.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "easy",
+      "access": "free",
+      "keywords": ["a/a", "ad acta", "arhiva", "predmet"]
+    },
+    {
+      "id": "car-001",
+      "categoryId": "carine",
+      "question": "Koliko iznosi jedinstvena stopa carine ad valorem prema carinskim propisima BiH?",
+      "options": ["17%", "5%", "10%", "12%"],
+      "answerIndex": 2,
+      "rationale": "Jedinstvena carinska stopa u ovom kontekstu iznosi 10% ad valorem.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "medium",
+      "access": "premium",
+      "keywords": ["carina", "ad valorem", "10%", "stopa"]
+    },
+    {
+      "id": "car-002",
+      "categoryId": "carine",
+      "question": "Koji dokument predstavlja međunarodni carinski dokument za privremeni uvoz uz oslobađanje od uvoznih dažbina?",
+      "options": ["Karnet TIR", "CIM tovarni list", "Karnet ATA", "JCI obrazac"],
+      "answerIndex": 2,
+      "rationale": "Karnet ATA koristi se za privremeni uvoz.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "medium",
+      "access": "free",
+      "keywords": ["ata", "karnet", "privremeni uvoz", "carinski dokument"]
+    },
+    {
+      "id": "car-003",
+      "categoryId": "carine",
+      "question": "Šta označava skraćenica NCTS?",
+      "options": ["Nacionalni carinski tarifni sistem", "Novi kompjuterizovani tranzitni sistem", "Nadzor carinskih teretnih stanica", "Nacrt carinske tehnološke saradnje"],
+      "answerIndex": 1,
+      "rationale": "NCTS je novi kompjuterizovani tranzitni sistem.",
+      "source": "Interni ispitni materijal / provjeriti sa zvaničnim programom",
+      "difficulty": "hard",
+      "access": "premium",
+      "keywords": ["ncts", "tranzit", "kompjuterizovani sistem"]
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "card-uio-001",
+      "questionId": "uio-002",
+      "categoryId": "uio",
+      "question": "Gdje je sjedište UIO BiH?",
+      "answer": "Sjedište Uprave za indirektno oporezivanje je u Banjoj Luci.",
+      "access": "free"
+    },
+    {
+      "id": "card-kanc-001",
+      "questionId": "kanc-003",
+      "categoryId": "kanc",
+      "question": "Šta znači a/a?",
+      "answer": "Ad acta — predmet je završen i može se arhivirati.",
+      "access": "free"
+    },
+    {
+      "id": "card-car-001",
+      "questionId": "car-002",
+      "categoryId": "carine",
+      "question": "Šta je Karnet ATA?",
+      "answer": "Međunarodni carinski dokument za privremeni uvoz.",
+      "access": "free"
+    }
+  ],
+  "guide": [
+    {
+      "id": "guide-uio",
+      "title": "Organizacija UIO",
+      "keywords": "uio sjedište banja luka regionalni centri zaposlenik",
+      "body": "UIO se u ispitnim pitanjima najčešće pojavljuje kroz strukturu, sjedište, regionalne centre i status zaposlenih."
+    },
+    {
+      "id": "guide-kanc",
+      "title": "Kancelarijsko poslovanje",
+      "keywords": "akt predmet arhiva pečat pecat omot ad acta",
+      "body": "Važni pojmovi su akt, predmet, dosje, omot predmeta, službeni pečat i oznaka a/a."
+    },
+    {
+      "id": "guide-carine",
+      "title": "Carinski postupci",
+      "keywords": "carina pdv ncts mrn ata tir skladište skladiste",
+      "body": "Za carinske postupke treba posebno ponavljati skraćenice, vrste dokumenata i osnovne stope."
+    }
+  ],
+  "disclaimer": "UIO ProPrep je nezavisni obrazovni alat i nije zvanično povezan sa Upravom za indirektno oporezivanje BiH. Sadržaj treba provjeravati sa zvaničnim propisima i ispitnim programom."
+}
