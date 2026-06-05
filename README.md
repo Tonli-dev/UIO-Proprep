@@ -29,6 +29,7 @@ npm run preview
 npm test
 npm run validate:content
 npm run import:questions -- "/putanja/do/PITANJA-SSS-OBJAVA-KONACNO.docx"
+npm run split:premium
 ```
 
 ## Sadržaj
@@ -43,6 +44,7 @@ Kompletni dostavljeni SSS set sadrži 180 pitanja. Importer čuva direktne odgov
 
 ```bash
 npm run import:questions -- "/putanja/do/PITANJA-SSS-OBJAVA-KONACNO.docx"
+npm run split:premium
 npm run validate:content
 ```
 

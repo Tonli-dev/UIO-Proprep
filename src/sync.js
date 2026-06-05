@@ -91,15 +91,18 @@ export async function loadPremiumQuestions(entitlement, contentVersion) {
     clearPremiumCache();
     return [];
   }
-  const { data, error } = await supabase.from("premium_questions").select("*").order("id");
+  let query = supabase.from("premium_questions").select("*").order("id");
+  if (contentVersion) query = query.eq("content_version", contentVersion);
+  const { data, error } = await query;
   if (error) throw error;
   const questions = (data || []).map((question) => ({
     id: question.id,
     categoryId: question.category_id,
-    questionType: "multiple-choice",
+    questionType: question.question_type || "multiple-choice",
     question: question.question,
-    options: question.options,
-    answerIndex: question.answer_index,
+    ...(question.question_type === "direct"
+      ? { answer: question.answer }
+      : { options: question.options, answerIndex: question.answer_index }),
     rationale: question.rationale,
     source: question.source,
     difficulty: question.difficulty,

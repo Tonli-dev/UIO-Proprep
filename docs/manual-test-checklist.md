@@ -24,6 +24,7 @@ Otvoriti `http://localhost:5173`.
 ## Dashboard
 
 - Prikazuje broj pitanja i cilj `180`.
+- Prikazuje `50/180` pitanja za gosta i `180/180` za premium korisnika.
 - Prikazuje free/premium status sadržaja.
 - Statistike su `0` na čistom browser storage-u.
 - Reset napretka gosta briše lokalnu statistiku i historiju.

@@ -1,10 +1,15 @@
 # Izvještaj uvoza SSS pitanja
 
-Iz dokumenta `PITANJA-SSS-OBJAVA-KONACNO (1).docx` uvezeno je ukupno 180 pitanja:
+Iz dokumenta `PITANJA-SSS-OBJAVA-KONACNO (1).docx` uvezeno je ukupno 180 pitanja. Javni JSON trenutno sadrži balansiran free set od 50 pitanja, a preostalih 130 pitanja se učitava iz Supabase `premium_questions` tabele za korisnike s aktivnim premium pravom.
 
 - Organizacija UIO i zaposleni: 49
 - Kancelarijsko poslovanje: 39
 - Carinski postupci: 92
+
+Free/premium raspodjela:
+
+- Free: 50 pitanja (`uio`: 14, `kanc`: 11, `carine`: 25)
+- Premium: 130 pitanja (`uio`: 35, `kanc`: 28, `carine`: 67)
 
 Dokument sadrži 179 pitanja s direktnim tačnim odgovorom i jedno pitanje s tri ponuđena odgovora. Aplikacija zato podržava:
 

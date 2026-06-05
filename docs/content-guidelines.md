@@ -41,6 +41,7 @@ Za ponovni uvoz kompletnog DOCX seta:
 
 ```bash
 python3 scripts/import-questions-docx.py "/putanja/do/PITANJA-SSS-OBJAVA-KONACNO.docx"
+node scripts/split-premium-content.mjs
 ```
 
 ## Preporučena raspodjela
