@@ -144,6 +144,16 @@
         <div class="panel">
           <p class="eyebrow">Aktivno prisjećanje</p>
           <h1>Kartice za brzo ponavljanje</h1>
+          <div class="flashcard-toolbar">
+            <div>
+              <strong id="flashcard-status">10 nasumičnih kartica</strong>
+              <span id="flashcard-mode-status">Novi set je dostupan nakon zadnje kartice.</span>
+            </div>
+            <label class="toggle-control">
+              <input id="flashcard-endless" type="checkbox">
+              <span>Beskonačni mod</span>
+            </label>
+          </div>
           <button class="flashcard" id="flashcard" type="button" aria-live="polite">
             <span class="flashcard-inner" id="flashcard-inner">
               <span class="flashcard-face flashcard-front">
@@ -168,6 +178,9 @@
             <button class="ghost-button" id="previous-card" type="button">Prethodna</button>
             <span id="flashcard-count">1/1</span>
             <button class="ghost-button" id="next-card" type="button">Sljedeća</button>
+          </div>
+          <div class="flashcard-actions">
+            <button class="primary-button" id="new-card-set" type="button" disabled>Generiraj novih 10</button>
           </div>
         </div>
       </section>

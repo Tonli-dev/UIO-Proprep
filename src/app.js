@@ -43,12 +43,18 @@ const state = {
   selectedAnswer: null,
   flashcardIndex: 0,
   flashcardFlipped: false,
+  flashcardDeck: [],
+  flashcardSeenIds: new Set(),
+  flashcardSourceKey: "",
+  flashcardEndless: false,
   examTimerId: null,
   examSecondsRemaining: 0,
   deferredInstallPrompt: null,
   syncInProgress: false,
   recoveryMode: false
 };
+
+const FLASHCARD_BATCH_SIZE = 10;
 
 const selectors = {
   views: document.querySelectorAll(".view"),
@@ -88,8 +94,12 @@ const selectors = {
   flashcardQuestion: document.querySelector("#flashcard-question"),
   flashcardAnswer: document.querySelector("#flashcard-answer"),
   flashcardCount: document.querySelector("#flashcard-count"),
+  flashcardStatus: document.querySelector("#flashcard-status"),
+  flashcardModeStatus: document.querySelector("#flashcard-mode-status"),
+  flashcardEndless: document.querySelector("#flashcard-endless"),
   previousCard: document.querySelector("#previous-card"),
   nextCard: document.querySelector("#next-card"),
+  newCardSet: document.querySelector("#new-card-set"),
   guideSearch: document.querySelector("#guide-search"),
   guideList: document.querySelector("#guide-list"),
   resetProgress: document.querySelector("#reset-progress"),
@@ -144,6 +154,8 @@ function bindEvents() {
   selectors.flashcard.addEventListener("click", flipFlashcard);
   selectors.previousCard.addEventListener("click", previousFlashcard);
   selectors.nextCard.addEventListener("click", nextFlashcard);
+  selectors.newCardSet.addEventListener("click", generateNewFlashcardSet);
+  selectors.flashcardEndless.addEventListener("change", toggleFlashcardEndless);
   selectors.guideSearch.addEventListener("input", renderGuide);
   selectors.installButton.addEventListener("click", installApp);
   selectors.authButton.addEventListener("click", () => state.session ? setRoute("account") : selectors.authModal.showModal());
@@ -693,21 +705,46 @@ async function resetProgress() {
 }
 
 function renderFlashcard() {
-  const cards = getAccessibleFlashcards();
+  ensureFlashcardDeck();
+  const cards = state.flashcardDeck;
   const card = cards[state.flashcardIndex] || cards[0];
   if (!card) {
     selectors.flashcardQuestion.textContent = "Nema dostupnih kartica.";
     selectors.flashcardAnswer.textContent = "Dodajte kartice u public/data/questions.json.";
     selectors.flashcardCount.textContent = "0/0";
+    selectors.flashcardStatus.textContent = "Nema dostupnih kartica";
+    selectors.flashcardModeStatus.textContent = "";
+    selectors.previousCard.disabled = true;
+    selectors.nextCard.disabled = true;
+    selectors.newCardSet.disabled = true;
     return;
   }
 
   const category = state.data.categories.find((item) => item.id === card.categoryId);
+  const isLastCard = state.flashcardIndex >= cards.length - 1;
+  const questionText = capitalizeFirstLetter(card.question);
+  const answerText = capitalizeFirstLetter(card.answer);
   selectors.flashcard.classList.toggle("flipped", state.flashcardFlipped);
   selectors.flashcardCategory.textContent = category?.title || "Oblast";
-  selectors.flashcardQuestion.textContent = card.question;
-  selectors.flashcardAnswer.textContent = card.answer;
-  selectors.flashcardCount.textContent = `${state.flashcardIndex + 1}/${cards.length}`;
+  selectors.flashcardQuestion.textContent = questionText;
+  selectors.flashcardAnswer.textContent = answerText;
+  setFlashcardTextSize(selectors.flashcardQuestion, questionText);
+  setFlashcardTextSize(selectors.flashcardAnswer, answerText);
+  selectors.flashcardCount.textContent = state.flashcardEndless
+    ? `${state.flashcardIndex + 1}. kartica`
+    : `${state.flashcardIndex + 1}/${cards.length}`;
+  selectors.flashcardStatus.textContent = state.flashcardEndless
+    ? `Beskonačni mod · ${cards.length} učitano`
+    : `${cards.length} nasumičnih kartica`;
+  selectors.flashcardModeStatus.textContent = state.flashcardEndless
+    ? "Sljedeće kartice se same dodaju bez osvježavanja."
+    : isLastCard
+      ? "Možete generirati novih 10 kartica."
+      : "Novi set je dostupan nakon zadnje kartice.";
+  selectors.flashcardEndless.checked = state.flashcardEndless;
+  selectors.previousCard.disabled = state.flashcardIndex === 0;
+  selectors.nextCard.disabled = isLastCard && !state.flashcardEndless;
+  selectors.newCardSet.disabled = !isLastCard || state.flashcardEndless;
 }
 
 function flipFlashcard() {
@@ -716,19 +753,48 @@ function flipFlashcard() {
 }
 
 function previousFlashcard() {
-  const cards = getAccessibleFlashcards();
-  if (!cards.length) return;
-  state.flashcardIndex = (state.flashcardIndex - 1 + cards.length) % cards.length;
+  ensureFlashcardDeck();
+  if (!state.flashcardDeck.length || state.flashcardIndex === 0) return;
+  state.flashcardIndex -= 1;
   state.flashcardFlipped = false;
   renderFlashcard();
 }
 
 function nextFlashcard() {
-  const cards = getAccessibleFlashcards();
-  if (!cards.length) return;
-  state.flashcardIndex = (state.flashcardIndex + 1) % cards.length;
+  ensureFlashcardDeck();
+  if (!state.flashcardDeck.length) return;
+  const isLastCard = state.flashcardIndex >= state.flashcardDeck.length - 1;
+  if (isLastCard) {
+    if (!state.flashcardEndless) return;
+    appendFlashcardBatch();
+  }
+  if (state.flashcardIndex < state.flashcardDeck.length - 1) state.flashcardIndex += 1;
   state.flashcardFlipped = false;
   renderFlashcard();
+}
+
+function generateNewFlashcardSet() {
+  resetFlashcardDeck();
+  renderFlashcard();
+}
+
+function toggleFlashcardEndless() {
+  state.flashcardEndless = selectors.flashcardEndless.checked;
+  renderFlashcard();
+}
+
+function setFlashcardTextSize(element, text) {
+  const length = String(text || "").length;
+  let size = "1.55rem";
+  if (length > 700) size = "0.95rem";
+  else if (length > 420) size = "1.05rem";
+  else if (length > 260) size = "1.15rem";
+  else if (length > 160) size = "1.3rem";
+  element.style.setProperty("--flashcard-text-size", size);
+}
+
+function capitalizeFirstLetter(value) {
+  return String(value || "").replace(/\p{L}/u, (letter) => letter.toLocaleUpperCase("bs-BA"));
 }
 
 function renderGuide() {
@@ -1093,6 +1159,75 @@ function getCategory(categoryId) {
 
 function getAccessibleQuestions(includePremium = hasPremiumAccess()) {
   return state.data.questions.filter((question) => includePremium || question.access !== "premium");
+}
+
+function ensureFlashcardDeck() {
+  const sourceKey = getAccessibleFlashcards()
+    .map((card) => getFlashcardUniqueId(card))
+    .sort()
+    .join("|");
+
+  if (state.flashcardSourceKey !== sourceKey) {
+    resetFlashcardDeck(sourceKey);
+    return;
+  }
+
+  if (!state.flashcardDeck.length) appendFlashcardBatch();
+}
+
+function resetFlashcardDeck(sourceKey = null) {
+  state.flashcardIndex = 0;
+  state.flashcardFlipped = false;
+  state.flashcardDeck = [];
+  state.flashcardSeenIds = new Set();
+  state.flashcardSourceKey = sourceKey ?? getAccessibleFlashcards()
+    .map((card) => getFlashcardUniqueId(card))
+    .sort()
+    .join("|");
+  appendFlashcardBatch();
+}
+
+function appendFlashcardBatch() {
+  const nextCards = pickRandomFlashcards(FLASHCARD_BATCH_SIZE);
+  state.flashcardDeck = [...state.flashcardDeck, ...nextCards];
+}
+
+function pickRandomFlashcards(count) {
+  const cards = getAccessibleFlashcards();
+  if (!cards.length) return [];
+
+  const selected = [];
+  const selectedIds = new Set();
+  const requestedCount = Math.min(count, cards.length);
+
+  while (selected.length < requestedCount) {
+    let available = cards.filter((card) => {
+      const cardId = getFlashcardUniqueId(card);
+      return !state.flashcardSeenIds.has(cardId) && !selectedIds.has(cardId);
+    });
+
+    if (!available.length) {
+      state.flashcardSeenIds = new Set();
+      available = cards.filter((card) => !selectedIds.has(getFlashcardUniqueId(card)));
+    }
+
+    if (!available.length) break;
+
+    const remainingCount = requestedCount - selected.length;
+    const batch = shuffle(available).slice(0, remainingCount);
+    batch.forEach((card) => {
+      const cardId = getFlashcardUniqueId(card);
+      selected.push(card);
+      selectedIds.add(cardId);
+      state.flashcardSeenIds.add(cardId);
+    });
+  }
+
+  return selected;
+}
+
+function getFlashcardUniqueId(card) {
+  return card.questionId || card.id;
 }
 
 function getAccessibleFlashcards() {
