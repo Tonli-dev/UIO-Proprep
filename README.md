@@ -63,6 +63,7 @@ Kopirajte `.env.example` u `.env` i unesite samo javne browser varijable:
 ```env
 VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
+VITE_PUBLIC_APP_URL=https://uio-proprep.vercel.app
 ```
 
 Detaljna konfiguracija email potvrde, Google OAutha, migracija, premium prava i Vercela opisana je u `docs/supabase-setup.md`.

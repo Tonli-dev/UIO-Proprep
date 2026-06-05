@@ -1,9 +1,21 @@
 import { requireSupabase, supabase } from "./supabase-client.js";
 
-const redirectTo = () => `${window.location.origin}/`;
+const canonicalProductionUrl = "https://uio-proprep.vercel.app";
+
+export function getAuthRedirectUrl({
+  origin = globalThis.location?.origin,
+  productionUrl = import.meta.env.VITE_PUBLIC_APP_URL,
+  isProduction = import.meta.env.PROD
+} = {}) {
+  const baseUrl = isProduction
+    ? productionUrl || canonicalProductionUrl
+    : origin || productionUrl || canonicalProductionUrl;
+
+  return new URL("/", baseUrl).toString();
+}
 
 export async function signUpWithEmail(email, password) {
-  return requireSupabase().auth.signUp({ email, password, options: { emailRedirectTo: redirectTo() } });
+  return requireSupabase().auth.signUp({ email, password, options: { emailRedirectTo: getAuthRedirectUrl() } });
 }
 
 export async function signInWithEmail(email, password) {
@@ -13,12 +25,12 @@ export async function signInWithEmail(email, password) {
 export async function signInWithGoogle() {
   return requireSupabase().auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: redirectTo() }
+    options: { redirectTo: getAuthRedirectUrl() }
   });
 }
 
 export async function requestPasswordReset(email) {
-  return requireSupabase().auth.resetPasswordForEmail(email, { redirectTo: redirectTo() });
+  return requireSupabase().auth.resetPasswordForEmail(email, { redirectTo: getAuthRedirectUrl() });
 }
 
 export async function updatePassword(password) {

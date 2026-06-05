@@ -11,14 +11,16 @@ Pokrenite datoteke iz `supabase/migrations/` kroz Supabase CLI ili SQL editor. M
 ## Email i lozinka
 
 - Uključite Email provider i ostavite obaveznu potvrdu emaila.
-- Site URL postavite na konačni Vercel URL.
-- Redirect allowlist mora sadržavati `http://localhost:5173/` i produkcijski root URL.
+- Site URL postavite na `https://uio-proprep.vercel.app/`, ne na localhost.
+- Redirect allowlist mora sadržavati `http://localhost:5173/**`, `http://127.0.0.1:5173/**` i `https://uio-proprep.vercel.app/**`.
+- U Vercelu postavite `VITE_PUBLIC_APP_URL=https://uio-proprep.vercel.app`.
+- U Auth email templateima koristite `{{ .ConfirmationURL }}` za dugme potvrde. Ako ručno sastavljate link, koristite `{{ .RedirectTo }}`, ne `{{ .SiteURL }}`.
 - Prije javnog lansiranja postavite vlastiti SMTP, CAPTCHA zaštitu i provjerite rate limits.
 
 ## Google OAuth
 
 1. U Google Cloud Console kreirajte OAuth web client.
-2. Dodajte `http://localhost:5173` i produkcijski Vercel origin.
+2. Dodajte `http://localhost:5173`, `http://127.0.0.1:5173` i `https://uio-proprep.vercel.app` kao dozvoljene origine.
 3. Kao callback dodajte Supabase callback URL prikazan u Google provider postavkama.
 4. Client ID i Client Secret unesite samo u Supabase Dashboard.
 
@@ -39,7 +41,9 @@ where user_id = 'USER_UUID';
 - Build command: `npm run build`
 - Output directory: `dist`
 - Dodajte `VITE_SUPABASE_URL` i `VITE_SUPABASE_PUBLISHABLE_KEY`.
+- Dodajte `VITE_PUBLIC_APP_URL=https://uio-proprep.vercel.app`.
 - Nakon prvog deploya ažurirajte Supabase Site URL, redirect allowlist i Google OAuth origin.
+- Ako Vercel preusmjerava na `carina.tonli.dev`, ta domena mora imati DNS podešen prema Vercelu ili custom domain treba privremeno ukloniti iz Vercel projekta.
 
 ## Resend API i testna Edge Function
 
