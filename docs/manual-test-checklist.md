@@ -12,6 +12,8 @@
 - [ ] Free korisnik direktnim Supabase upitom ne može dohvatiti premium pitanja.
 - [ ] Manipulacija localStorage-a ne dodjeljuje premium pravo.
 - [ ] Premium cache prestaje vrijediti nakon isteka entitlementa.
+- [ ] Supabase Auth leaked password protection je uključen.
+- [ ] Supabase Auth SMTP koristi verificirani Resend sender na `tonli.dev`.
 
 Pokrenuti aplikaciju:
 
@@ -49,9 +51,25 @@ Otvoriti `http://localhost:5173`.
 ## Flashcards i priručnik
 
 - Flashcard se okreće na klik/tap.
+- Kartice se generiraju u setovima od 10 nasumičnih pitanja.
+- Nakon 10/10 kartice aktivira se “Generiraj novih 10”.
+- Beskonačni mod automatski dodaje novi set i nastavlja bez reload-a.
+- Duga pitanja i odgovori ne izlaze iz kartice na mobilnom prikazu.
 - Prethodna/sljedeća kartica rade bez preskakanja.
 - Pretraga pronalazi guide sekcije i pitanja po keywordima.
 - Premium pitanja su označena u pretrazi.
+
+## Premium checkout
+
+- Gost na Račun stranici vidi pricing, ali CTA otvara login modal.
+- Prijavljeni free korisnik vidi pakete 30 dana / 90 dana / zauvijek.
+- Klik na paket kreira Lemon checkout za ispravan package id.
+- Checkout return `?checkout=success` prikazuje toast i osvježava account stanje.
+- Lemon webhook s nevalidnim potpisom vraća grešku i ne mijenja bazu.
+- Lemon paid event upisuje `premium_purchases` i aktivira entitlement.
+- 30/90 dana se produžavaju od trenutnog aktivnog isteka.
+- Lifetime paket postavlja premium bez datuma isteka.
+- Refund/chargeback event označava kupovinu i rekalkuliše entitlement.
 
 ## PWA/offline
 
@@ -66,3 +84,12 @@ Otvoriti `http://localhost:5173`.
 - Kviz akcije su vidljive i dostupne pri dnu ekrana.
 - Answer kartice ne izlaze van širine ekrana.
 - Result score i pogrešna pitanja su čitljivi na mobitelu.
+- Premium pricing kartice su čitljive i CTA dugmad imaju dovoljan razmak.
+
+## Legal i launch
+
+- `carina.tonli.dev` je primarna Vercel domena.
+- Supabase Site URL, redirect allowlist i Google OAuth origin uključuju `carina.tonli.dev`.
+- Terms, Privacy i Refund policy linkovi rade iz signup modala.
+- Footer/legal napomena jasno kaže da aplikacija nije zvanična UIO aplikacija i ne garantuje prolaz.
+- Prije launcha ručno su pregledana sva pitanja iz `docs/content-import-report.md`, posebno duplirane formulacije.

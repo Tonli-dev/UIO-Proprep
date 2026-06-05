@@ -1,12 +1,33 @@
 <!doctype html>
 <html lang="bs">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Politika privatnosti — UIO ProPrep</title><style>body{margin:0;background:#f1f5f9;color:#0f172a;font:16px/1.65 system-ui}main{max-width:760px;margin:3rem auto;padding:2rem;background:white;border-radius:1.5rem;box-shadow:0 20px 45px #0f172a14}h1{color:#1d4ed8}</style></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Politika privatnosti - UIO ProPrep</title>
+  <style>body{margin:0;background:#f1f5f9;color:#0f172a;font:16px/1.65 system-ui}main{max-width:820px;margin:3rem auto;padding:2rem;background:white;border-radius:1.5rem;box-shadow:0 20px 45px #0f172a14}h1,h2{color:#1d4ed8}a{color:#1d4ed8;font-weight:700}</style>
+</head>
 <body>
   <main>
     <h1>Politika privatnosti</h1>
-    <p>UIO ProPrep lokalno čuva gost napredak. Nakon prijave, email, profil i napredak obrađuju se kroz Supabase radi sinkronizacije i provjere premium prava.</p>
-    <p>Aplikacija ne koristi service-role ključ u browseru. Za zahtjev pristupa, ispravke ili brisanja podataka kontaktirajte vlasnika aplikacije.</p>
-    <p>Ovaj privremeni tekst mora biti pravno pregledan prije javnog lansiranja.</p>
+    <p>Ova politika objašnjava koje podatke UIO ProPrep obrađuje radi rada aplikacije, sinkronizacije napretka i provjere premium pristupa.</p>
+
+    <h2>Podaci koje obrađujemo</h2>
+    <p>Kada koristite aplikaciju kao gost, napredak se čuva lokalno u browseru. Kada kreirate račun, Supabase obrađuje email, korisnički ID, osnovne profilne podatke, sesiju, napredak u kvizovima, pokušaje i premium status. Ako kupite premium, obrađujemo podatke potrebne za povezivanje Lemon Squeezy narudžbe sa vašim korisničkim računom.</p>
+
+    <h2>Svrha obrade</h2>
+    <p>Podaci se koriste za prijavu, sigurnost računa, sinkronizaciju napretka, prikaz statistike, omogućavanje premium sadržaja i korisničku podršku. Service-role ili secret ključevi se ne nalaze u browser aplikaciji.</p>
+
+    <h2>Treće strane</h2>
+    <p>Aplikacija koristi Supabase za autentifikaciju, bazu i Edge Functions, Vercel za hosting, Resend/Supabase SMTP za emailove i Lemon Squeezy za obradu plaćanja. Svaki provider obrađuje podatke u skladu sa svojim pravilima privatnosti.</p>
+
+    <h2>Lokalni storage i PWA cache</h2>
+    <p>Aplikacija lokalno čuva free napredak, offline queue, historiju pokušaja i vremenski ograničen premium cache nakon potvrđenog premium prava. Browser cache i service worker služe za offline rad free aplikacije i ne cacheiraju Supabase Auth/API zahtjeve.</p>
+
+    <h2>Zadržavanje i brisanje</h2>
+    <p>Podaci računa čuvaju se dok imate aktivan račun ili dok su potrebni za evidenciju kupovine, sigurnost i podršku. Možete zatražiti pristup, ispravku ili brisanje podataka kontaktiranjem vlasnika aplikacije.</p>
+
+    <h2>Kontakt</h2>
+    <p>Za privatnost i podatke kontaktirajte vlasnika aplikacije na email adresu objavljenu u aplikaciji ili na domeni tonli.dev.</p>
   </main>
 </body>
 </html>

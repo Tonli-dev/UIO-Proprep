@@ -11,16 +11,16 @@ Pokrenite datoteke iz `supabase/migrations/` kroz Supabase CLI ili SQL editor. M
 ## Email i lozinka
 
 - Uključite Email provider i ostavite obaveznu potvrdu emaila.
-- Site URL postavite na `https://uio-proprep.vercel.app/`, ne na localhost.
-- Redirect allowlist mora sadržavati `http://localhost:5173/**`, `http://127.0.0.1:5173/**` i `https://uio-proprep.vercel.app/**`.
-- U Vercelu postavite `VITE_PUBLIC_APP_URL=https://uio-proprep.vercel.app`.
+- Site URL postavite na `https://carina.tonli.dev/`, ne na localhost.
+- Redirect allowlist mora sadržavati `http://localhost:5173/**`, `http://127.0.0.1:5173/**`, `https://carina.tonli.dev/**` i `https://uio-proprep.vercel.app/**`.
+- U Vercelu postavite `VITE_PUBLIC_APP_URL=https://carina.tonli.dev`.
 - U Auth email templateima koristite `{{ .ConfirmationURL }}` za dugme potvrde. Ako ručno sastavljate link, koristite `{{ .RedirectTo }}`, ne `{{ .SiteURL }}`.
-- Prije javnog lansiranja postavite vlastiti SMTP, CAPTCHA zaštitu i provjerite rate limits.
+- Prije javnog lansiranja postavite vlastiti SMTP, leaked password protection, CAPTCHA zaštitu i provjerite rate limits.
 
 ## Google OAuth
 
 1. U Google Cloud Console kreirajte OAuth web client.
-2. Dodajte `http://localhost:5173`, `http://127.0.0.1:5173` i `https://uio-proprep.vercel.app` kao dozvoljene origine.
+2. Dodajte `http://localhost:5173`, `http://127.0.0.1:5173`, `https://carina.tonli.dev` i `https://uio-proprep.vercel.app` kao dozvoljene origine.
 3. Kao callback dodajte Supabase callback URL prikazan u Google provider postavkama.
 4. Client ID i Client Secret unesite samo u Supabase Dashboard.
 
@@ -41,9 +41,57 @@ where user_id = 'USER_UUID';
 - Build command: `npm run build`
 - Output directory: `dist`
 - Dodajte `VITE_SUPABASE_URL` i `VITE_SUPABASE_PUBLISHABLE_KEY`.
-- Dodajte `VITE_PUBLIC_APP_URL=https://uio-proprep.vercel.app`.
+- Dodajte `VITE_PUBLIC_APP_URL=https://carina.tonli.dev`.
 - Nakon prvog deploya ažurirajte Supabase Site URL, redirect allowlist i Google OAuth origin.
 - Ako Vercel preusmjerava na `carina.tonli.dev`, ta domena mora imati DNS podešen prema Vercelu ili custom domain treba privremeno ukloniti iz Vercel projekta.
+
+## Lemon Squeezy premium kupovina
+
+Premium kupovina radi kroz dvije Edge Function rute:
+
+- `create-premium-checkout`: poziva je prijavljeni korisnik iz browsera i zahtijeva validan Supabase JWT.
+- `lemon-webhook`: poziva je Lemon Squeezy i ima `verify_jwt = false`; pristup štiti `x-signature` HMAC verifikacija.
+
+Prije produkcije otvorite Lemon Squeezy account i provjerite onboarding za fizičko lice iz BiH. Ako account nije odobren, nemojte aktivirati payment flow; nastavite ručno dodjeljivanje entitlements dok ne izaberete fallback provider.
+
+Kreirajte tri one-time varijante/proizvoda:
+
+- `premium_30_days`: 20 KM
+- `premium_90_days`: 35 KM
+- `premium_lifetime`: 60 KM
+
+Postavite Edge Function secrets:
+
+```bash
+npx supabase secrets set PUBLIC_APP_URL=https://carina.tonli.dev --project-ref uzgmaxfzkbkmyjmylpow
+npx supabase secrets set LEMON_SQUEEZY_API_KEY=... --project-ref uzgmaxfzkbkmyjmylpow
+npx supabase secrets set LEMON_SQUEEZY_STORE_ID=... --project-ref uzgmaxfzkbkmyjmylpow
+npx supabase secrets set LEMON_SQUEEZY_VARIANT_30_DAYS=... --project-ref uzgmaxfzkbkmyjmylpow
+npx supabase secrets set LEMON_SQUEEZY_VARIANT_90_DAYS=... --project-ref uzgmaxfzkbkmyjmylpow
+npx supabase secrets set LEMON_SQUEEZY_VARIANT_LIFETIME=... --project-ref uzgmaxfzkbkmyjmylpow
+npx supabase secrets set LEMON_SQUEEZY_WEBHOOK_SECRET=... --project-ref uzgmaxfzkbkmyjmylpow
+```
+
+Za test mode dodajte:
+
+```bash
+npx supabase secrets set LEMON_SQUEEZY_TEST_MODE=true --project-ref uzgmaxfzkbkmyjmylpow
+```
+
+Deploy funkcija:
+
+```bash
+npx supabase functions deploy create-premium-checkout --project-ref uzgmaxfzkbkmyjmylpow
+npx supabase functions deploy lemon-webhook --no-verify-jwt --project-ref uzgmaxfzkbkmyjmylpow
+```
+
+Webhook URL:
+
+```text
+https://uzgmaxfzkbkmyjmylpow.supabase.co/functions/v1/lemon-webhook
+```
+
+Webhook mora slati evente za uspješnu kupovinu i refund. Nakon refund/chargeback eventa aplikacija rekalkuliše premium pravo iz preostalih validnih kupovina.
 
 ## Resend API i testna Edge Function
 

@@ -16,10 +16,10 @@ describe("auth redirect URL", () => {
     expect(
       getAuthRedirectUrl({
         origin: "https://uio-proprep-preview.vercel.app",
-        productionUrl: "https://uio-proprep.vercel.app",
+        productionUrl: "https://carina.tonli.dev",
         isProduction: true
       })
-    ).toBe("https://uio-proprep.vercel.app/");
+    ).toBe("https://carina.tonli.dev/");
   });
 
   it("ima sigurnu produkcijsku vrijednost i bez env varijable", () => {
@@ -29,6 +29,6 @@ describe("auth redirect URL", () => {
         productionUrl: "",
         isProduction: true
       })
-    ).toBe("https://uio-proprep.vercel.app/");
+    ).toBe("https://carina.tonli.dev/");
   });
 });

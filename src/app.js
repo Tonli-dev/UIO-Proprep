@@ -26,6 +26,8 @@ import {
   resetCloudProgress,
   syncProgress
 } from "./sync.js";
+import { createPremiumCheckout } from "./billing.js";
+import { PREMIUM_PACKAGES } from "./premium.js";
 
 const state = {
   data: null,
@@ -51,6 +53,7 @@ const state = {
   examSecondsRemaining: 0,
   deferredInstallPrompt: null,
   syncInProgress: false,
+  checkoutInProgress: false,
   recoveryMode: false
 };
 
@@ -138,6 +141,7 @@ async function init() {
   if (state.session) await hydrateSignedInState();
   onAuthStateChange(handleAuthStateChange);
   renderAll();
+  await handleCheckoutReturn();
 }
 
 function bindEvents() {
@@ -376,7 +380,7 @@ function startQuestionSet(mode, questions, label, category = null, options = {})
   clearExamTimer();
   state.activeMode = mode;
   state.activeCategory = category;
-  state.activeQuestions = shuffle([...availableQuestions]);
+  state.activeQuestions = getRandomizedQuestionOrder(availableQuestions);
   state.activeAnswers = [];
   state.currentQuestionIndex = 0;
   state.currentCorrect = 0;
@@ -434,7 +438,7 @@ function renderQuestion() {
   selectors.questionText.textContent = question.question;
   selectors.answers.innerHTML = "";
 
-  if (isDirectQuestion(question)) {
+  if (!hasValidMultipleChoiceOptions(question)) {
     const prompt = document.createElement("div");
     prompt.className = "recall-card";
     prompt.innerHTML = `
@@ -466,8 +470,8 @@ function revealDirectAnswer(question) {
     <div class="feedback-icon">i</div>
     <div>
       <h3>Tačan odgovor</h3>
-      <p>${escapeHtml(question.answer)}</p>
-      <small>${escapeHtml(question.source)}</small>
+      <p>${escapeHtml(getCorrectAnswer(question))}</p>
+      <small>${escapeHtml(question.source || "Izvor će biti dodan u finalnoj bazi pitanja.")}</small>
     </div>
   `;
   selectors.answers.innerHTML = `
@@ -1035,8 +1039,13 @@ function renderAccount() {
       <h1>Free aplikacija radi i bez računa.</h1>
       <p class="muted">Prijavom dobivate sinkronizaciju napretka između uređaja i provjeru premium prava. Free pitanja ostaju dostupna offline.</p>
       <button class="primary-button" id="account-login" type="button">Prijavi se ili registriraj</button>
+      ${renderPremiumPlans({ disabled: true })}
+      <p class="muted launch-note">UIO ProPrep je nezavisni obrazovni alat. Ne garantuje prolaz na ispitu i nije zvanično povezan s Upravom za indirektno oporezivanje BiH.</p>
     `;
     selectors.accountContent.querySelector("#account-login").addEventListener("click", () => selectors.authModal.showModal());
+    selectors.accountContent.querySelectorAll("[data-package-id]").forEach((button) => {
+      button.addEventListener("click", () => selectors.authModal.showModal());
+    });
     return;
   }
 
@@ -1073,6 +1082,8 @@ function renderAccount() {
       <button class="primary-button" id="manual-sync" type="button" ${state.syncInProgress ? "disabled" : ""}>${state.syncInProgress ? "Sinkroniziram..." : "Sinkroniziraj sada"}</button>
       <button class="ghost-button" id="logout" type="button">Odjavi se</button>
     </div>
+    ${renderPremiumPlans({ entitlement })}
+    <p class="muted launch-note">UIO ProPrep je nezavisni obrazovni alat. Ne garantuje prolaz na ispitu i nije zvanično povezan s Upravom za indirektno oporezivanje BiH.</p>
   `;
 
   selectors.accountContent.querySelector("#manual-sync").addEventListener("click", runSync);
@@ -1096,6 +1107,83 @@ function renderAccount() {
     renderAccount();
     showToast("Lozinka je promijenjena.");
   });
+  selectors.accountContent.querySelectorAll("[data-package-id]").forEach((button) => {
+    button.addEventListener("click", () => handlePremiumCheckout(button.dataset.packageId));
+  });
+}
+
+function renderPremiumPlans({ entitlement = null, disabled = false } = {}) {
+  const isPremium = hasPremiumAccess();
+  const expires = entitlement?.expires_at ? new Date(entitlement.expires_at).toLocaleDateString("bs-BA") : null;
+  const statusText = isPremium
+    ? expires ? `Premium aktivan do ${expires}.` : "Premium aktivan bez datuma isteka."
+    : "Premium otključava svih 180 pitanja, simulaciju ispita i zaštićeni premium set.";
+
+  return `
+    <section class="premium-plans" aria-label="Premium paketi">
+      <div class="premium-plans-header">
+        <div>
+          <p class="eyebrow">Premium pristup</p>
+          <h2>Odaberi paket za pripremu</h2>
+          <p class="muted">${statusText}</p>
+        </div>
+      </div>
+      <div class="pricing-grid">
+        ${PREMIUM_PACKAGES.map((plan) => `
+          <article class="pricing-card ${plan.id === "premium_90_days" ? "featured" : ""}">
+            <span class="premium-label">${escapeHtml(plan.badge)}</span>
+            <h3>${escapeHtml(plan.title)}</h3>
+            <strong>${escapeHtml(plan.price)}</strong>
+            <p>${escapeHtml(plan.description)}</p>
+            <button class="${plan.id === "premium_90_days" ? "primary-button" : "ghost-button"}" data-package-id="${escapeHtml(plan.id)}" type="button" ${state.checkoutInProgress ? "disabled" : ""}>
+              ${disabled ? "Prijavi se za kupovinu" : state.checkoutInProgress ? "Pripremam checkout..." : isPremium ? "Produži pristup" : "Kupi premium"}
+            </button>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+async function handlePremiumCheckout(packageId) {
+  if (!state.session) {
+    selectors.authModal.showModal();
+    return;
+  }
+  if (state.checkoutInProgress) return;
+
+  state.checkoutInProgress = true;
+  renderAccount();
+  try {
+    const checkoutUrl = await createPremiumCheckout(packageId, state.data?.contentVersion);
+    window.location.assign(checkoutUrl);
+  } catch (error) {
+    state.checkoutInProgress = false;
+    renderAccount();
+    showToast(getFriendlyError(error), "error");
+  }
+}
+
+async function handleCheckoutReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const checkoutState = params.get("checkout");
+  if (!checkoutState) return;
+
+  window.history.replaceState({}, "", window.location.pathname + window.location.hash);
+  if (checkoutState === "success") {
+    if (state.session) {
+      await hydrateSignedInState();
+      renderAll();
+    }
+    showToast("Kupovina je primljena. Premium status će se osvježiti čim webhook potvrdi uplatu.");
+    setRoute("account");
+    return;
+  }
+
+  if (checkoutState === "cancelled") {
+    showToast("Checkout je otkazan. Premium možete kupiti kada budete spremni.", "error");
+    setRoute("account");
+  }
 }
 
 function updateNetworkBadge() {
@@ -1117,6 +1205,9 @@ function getFriendlyError(error) {
   if (message.includes("Email not confirmed")) return "Prvo potvrdite email adresu.";
   if (message.includes("already registered")) return "Račun s ovim emailom već postoji.";
   if (message.includes("Supabase još nije konfiguriran")) return message;
+  if (message.includes("Lemon Squeezy")) return "Premium kupovina još nije produkcijski konfigurirana.";
+  if (message.includes("Odabrani premium paket")) return message;
+  if (message.includes("Checkout link")) return "Checkout link trenutno nije dostupan. Pokušajte ponovo.";
   if (message.includes("Failed to fetch")) return "Trenutno nema veze sa serverom.";
   return "Akcija trenutno nije uspjela. Pokušajte ponovo.";
 }
@@ -1301,9 +1392,9 @@ function validateData(data) {
     if (ids.has(question.id)) errors.push(`Dupli id pitanja: ${question.id}.`);
     ids.add(question.id);
     if (!categoryIds.has(question.categoryId)) errors.push(`${question.id} ima nepoznatu kategoriju.`);
-    if (isDirectQuestion(question)) {
-      if (!question.answer) errors.push(`${question.id} nema direktni odgovor.`);
-    } else {
+  if (!hasValidMultipleChoiceOptions(question)) {
+    if (!question.answer) errors.push(`${question.id} nema direktni odgovor.`);
+  } else {
       if (!Array.isArray(question.options) || question.options.length < 2) errors.push(`${question.id} mora imati najmanje 2 odgovora.`);
       if (!Number.isInteger(question.answerIndex) || question.answerIndex < 0 || question.answerIndex >= question.options?.length) {
         errors.push(`${question.id} ima nevalidan answerIndex.`);
@@ -1318,18 +1409,33 @@ function validateData(data) {
 }
 
 function isDirectQuestion(question) {
-  return question.questionType === "direct" || (!Array.isArray(question.options) && Boolean(question.answer));
+  return question.questionType === "direct" || !hasValidMultipleChoiceOptions(question);
 }
 
 function getCorrectAnswer(question) {
-  return isDirectQuestion(question) ? question.answer : question.options?.[question.answerIndex] || "";
+  if (hasValidMultipleChoiceOptions(question)) return question.options[question.answerIndex];
+  return question.answer || "";
+}
+
+function hasValidMultipleChoiceOptions(question) {
+  return Array.isArray(question.options)
+    && question.options.length >= 2
+    && Number.isInteger(question.answerIndex)
+    && question.answerIndex >= 0
+    && question.answerIndex < question.options.length;
+}
+
+function getRandomizedQuestionOrder(questions) {
+  return shuffle([...questions]);
 }
 
 function shuffle(items) {
-  return items
-    .map((item) => ({ item, sort: Math.random() }))
-    .sort((first, second) => first.sort - second.sort)
-    .map(({ item }) => item);
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+  return shuffled;
 }
 
 function escapeHtml(value) {

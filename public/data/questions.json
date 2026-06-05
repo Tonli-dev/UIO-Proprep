@@ -9,7 +9,7 @@
   "sourceDocument": {
     "filename": "PITANJA-SSS-OBJAVA-KONACNO (1).docx",
     "questionCount": 180,
-    "note": "Pitanja i tačni odgovori uvezeni su bez generiranja dodatnih ponuđenih odgovora.",
+    "note": "Pitanja su dopunjena sa četiri ponuđena odgovora; options[answerIndex] je tačan odgovor.",
     "legalSources": {
       "uio": [
         "Zakon o sistemu indirektnog oporezivanja u Bosni i Hercegovini (“Službeni glasnik BiH” br. 44/03, 52/04, 34/07, 4/08, 49/09, 32/13 i 91/17)",
@@ -52,14 +52,10 @@
     }
   },
   "schemaDocumentation": {
-    "directQuestion": {
-      "questionType": "direct",
-      "answer": "Tačan odgovor koji korisnik otkriva i sam ocjenjuje."
-    },
     "multipleChoiceQuestion": {
       "questionType": "multiple-choice",
-      "options": "Ponuđeni odgovori iz izvornog dokumenta.",
-      "answerIndex": "Indeks tačnog odgovora."
+      "options": "Tačno četiri ponuđena odgovora.",
+      "answerIndex": "Indeks tačnog odgovora (0, 1, 2 ili 3)."
     }
   },
   "categories": [
@@ -86,7 +82,7 @@
     {
       "id": "uio-001",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Uprava za indirektno oporezivanje je strukturalno organizovana kao:",
       "answer": "Glavna kancelarija i 4 regionalna centra",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Glavna kancelarija i 4 regionalna centra",
@@ -101,12 +97,19 @@
         "kancelarija",
         "regionalna",
         "centra"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "Glavna kancelarija i 3 regionalna centra",
+        "Upravni odbor i područne ispostave",
+        "Glavna kancelarija i 4 regionalna centra",
+        "Ministarstvo finansija i regionalne carinske kancelarije"
       ]
     },
     {
       "id": "uio-002",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Sjedište Uprave za indirektno oporezivanje je u:",
       "answer": "Banja Luci",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Banja Luci",
@@ -119,12 +122,19 @@
         "uprave",
         "banja",
         "luci"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "Sarajevu",
+        "Banja Luci",
+        "Mostaru",
+        "Tuzli"
       ]
     },
     {
       "id": "uio-003",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Regionalni centri Uprave za indirektno oporezivanje se nalaze u:",
       "answer": "Banja Luci, Sarajevu, Tuzli i Mostaru.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Banja Luci, Sarajevu, Tuzli i Mostaru.",
@@ -141,12 +151,19 @@
         "luci",
         "sarajevu",
         "tuzli"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "Banja Luci, Zenici, Bihaću i Trebinju.",
+        "Sarajevu, Mostaru, Brčkom i Istočnom Sarajevu.",
+        "Tuzli, Doboju, Livnu i Bijeljini.",
+        "Banja Luci, Sarajevu, Tuzli i Mostaru."
       ]
     },
     {
       "id": "uio-004",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Institucionalna struktura uređuje Upravu za indirektno oporezivanje kao:",
       "answer": "Samostalnu upravnu organizaciju koja sprovodi zakone i druge propise o indirektnom oporezivanju i politiku koju utvrđuje Savjet ministara na prijedlog Upravnog odbora.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Samostalnu upravnu organizaciju koja sprovodi zakone i druge propise o indirektnom oporezivanju i politiku koju utvrđuje Savjet ministara na prijedlog Upravnog odbora.",
@@ -163,12 +180,19 @@
         "upravnu",
         "organizaciju",
         "sprovodi"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "Samostalnu upravnu organizaciju koja sprovodi zakone i druge propise o indirektnom oporezivanju i politiku koju utvrđuje Savjet ministara na prijedlog Upravnog odbora.",
+        "Ministarstvo koje samostalno donosi propise o direktnom oporezivanju i budžetu institucija BiH.",
+        "Javnu ustanovu koja obavlja isključivo savjetodavne poslove za poreske obveznike.",
+        "Organizacionu jedinicu Ministarstva finansija koja provodi samo politiku entitetskih vlada."
       ]
     },
     {
       "id": "uio-005",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Uprava za indirektno oporezivanje je nadležna:",
       "answer": "Obavlja provjeru, ograničenu provjeru i kontrolu obveznika indirektnih poreza.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Obavlja provjeru, ograničenu provjeru i kontrolu obveznika indirektnih poreza.",
@@ -185,12 +209,19 @@
         "obveznika",
         "indirektnih",
         "poreza"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "Izdaje lične dokumente i vodi evidenciju prebivališta građana.",
+        "Odlučuje o registraciji političkih stranaka i udruženja građana.",
+        "Obavlja provjeru, ograničenu provjeru i kontrolu obveznika indirektnih poreza.",
+        "Vrši nadzor nad radom obrazovnih ustanova i izdaje diplome."
       ]
     },
     {
       "id": "uio-006",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Uprava za indirektno oporezivanje je nadležna da:",
       "answer": "po potrebi daje mišljenje o primjeni propisa o indirektnom oporezivanju.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: po potrebi daje mišljenje o primjeni propisa o indirektnom oporezivanju.",
@@ -207,12 +238,19 @@
         "propisa",
         "indirektnom",
         "oporezivanju"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "po potrebi izdaje građevinske dozvole za carinske objekte.",
+        "po potrebi daje mišljenje o primjeni propisa o indirektnom oporezivanju.",
+        "donosi konačne presude u sporovima poreskih obveznika.",
+        "raspisuje izbore za članove Upravnog odbora UIO."
       ]
     },
     {
       "id": "uio-007",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "UIO je nadležna:",
       "answer": "za sprovođenje zakonskih propisa o indirektnom oporezivanju i politike koju utvrdi Savjet ministara BiH na prijedlog Upravnog odbora UIO",
       "rationale": "Tačan odgovor prema izvornom dokumentu: za sprovođenje zakonskih propisa o indirektnom oporezivanju i politike koju utvrdi Savjet ministara BiH na prijedlog Upravnog odbora UIO",
@@ -229,12 +267,19 @@
         "oporezivanju",
         "politike",
         "koju"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "za sprovođenje propisa o direktnim porezima koje utvrđuju kantonalna ministarstva finansija",
+        "za vođenje matičnih knjiga i registraciju prebivališta na teritoriji Bosne i Hercegovine",
+        "za izdavanje dozvola za rad svim pravnim licima koja obavljaju promet robe",
+        "za sprovođenje zakonskih propisa o indirektnom oporezivanju i politike koju utvrdi Savjet ministara BiH na prijedlog Upravnog odbora UIO"
       ]
     },
     {
       "id": "uio-008",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Uprava za indirektno oporezivanje je nadležna:",
       "answer": "Za naplatu i raspodjelu indirektnih poreza na teritoriji Bosne i Hercegovine.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Za naplatu i raspodjelu indirektnih poreza na teritoriji Bosne i Hercegovine.",
@@ -249,12 +294,19 @@
         "indirektnih",
         "poreza",
         "teritoriji"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "Za naplatu i raspodjelu indirektnih poreza na teritoriji Bosne i Hercegovine.",
+        "Za naplatu i raspodjelu direktnih poreza isključivo na teritoriji Federacije BiH.",
+        "Za izdavanje putnih isprava i kontrolu prebivališta građana.",
+        "Za nadzor nad radom opštinskih i kantonalnih poreskih uprava."
       ]
     },
     {
       "id": "uio-009",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Uprava za indirektno oporezivanje je nadležna da:",
       "answer": "Vodi jedinstveni račun i vrši naplatu prihoda po osnovu indirektnih poreza, ostalih prihoda i taksi, doznačavanje i raspodjelu prihoda po osnovu indirektnih poreza na način regulisan zakonom",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Vodi jedinstveni račun i vrši naplatu prihoda po osnovu indirektnih poreza, ostalih prihoda i taksi, doznačavanje i raspodjelu prihoda po osnovu indirektnih poreza na način regulisan zakonom",
@@ -271,12 +323,19 @@
         "naplatu",
         "prihoda",
         "osnovu"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "Vodi odvojene račune za svaki regionalni centar i raspoređuje prihode prema internim odlukama centara.",
+        "Vodi registar zaposlenih u javnoj upravi i dodjeljuje službene legitimacije.",
+        "Vodi jedinstveni račun i vrši naplatu prihoda po osnovu indirektnih poreza, ostalih prihoda i taksi, doznačavanje i raspodjelu prihoda po osnovu indirektnih poreza na način regulisan zakonom",
+        "Vodi evidenciju graničnih prelaza i izdaje odobrenja za međunarodni prevoz putnika."
       ]
     },
     {
       "id": "uio-010",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Uprava za indirektno oporezivanje je nadležna da:",
       "answer": "Provodi postupak prinudne naplate",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Provodi postupak prinudne naplate",
@@ -290,12 +349,19 @@
         "postupak",
         "prinudne",
         "naplate"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "Provodi postupak izdavanja ličnih karata",
+        "Provodi postupak prinudne naplate",
+        "Provodi postupak registracije motornih vozila",
+        "Provodi postupak imenovanja članova Upravnog odbora"
       ]
     },
     {
       "id": "uio-011",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Uprava za indirektno oporezivanje je nadležna da:",
       "answer": "Vrši edukaciju poreskih obveznika.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Vrši edukaciju poreskih obveznika.",
@@ -309,12 +375,19 @@
         "edukaciju",
         "poreskih",
         "obveznika"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "Vrši edukaciju zaposlenih u školama i univerzitetima.",
+        "Vrši edukaciju članova biračkih odbora.",
+        "Vrši edukaciju lica za polaganje vozačkog ispita.",
+        "Vrši edukaciju poreskih obveznika."
       ]
     },
     {
       "id": "uio-012",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Upravu za indirektno oporezivanje predstavlja:",
       "answer": "Direktor.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Direktor.",
@@ -326,12 +399,19 @@
         "upravu",
         "predstavlja",
         "direktor"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "Direktor.",
+        "Upravni odbor.",
+        "Savjet ministara BiH.",
+        "Pomoćnik direktora."
       ]
     },
     {
       "id": "uio-013",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Uprava za indirektno oporezivanje je nadležna za naplatu sljedećih prihoda:",
       "answer": "Prihoda od indirektnih poreza, te ostalih prihoda i taksi.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Prihoda od indirektnih poreza, te ostalih prihoda i taksi.",
@@ -347,12 +427,19 @@
         "poreza",
         "ostalih",
         "taksi"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "Isključivo prihoda od direktnih poreza i doprinosa.",
+        "Prihoda od komunalnih taksi i lokalnih naknada.",
+        "Prihoda od indirektnih poreza, te ostalih prihoda i taksi.",
+        "Samo prihoda od akciza bez ostalih prihoda i taksi."
       ]
     },
     {
       "id": "uio-014",
       "categoryId": "uio",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Pojam “indirektni porezi” se odnosi na:",
       "answer": "Uvozne i izvozne dažbine, akciza, porez na dodatnu vrijednost i sve druge poreze zaračunate na robu i usluge, uključujući porez na promet i putarinu.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Uvozne i izvozne dažbine, akciza, porez na dodatnu vrijednost i sve druge poreze zaračunate na robu i usluge, uključujući porez na promet i putarinu.",
@@ -369,12 +456,19 @@
         "izvozne",
         "dažbine",
         "akciza"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "Porez na dohodak, porez na dobit i doprinosi za socijalno osiguranje.",
+        "Uvozne i izvozne dažbine, akciza, porez na dodatnu vrijednost i sve druge poreze zaračunate na robu i usluge, uključujući porez na promet i putarinu.",
+        "Samo carinu i porez na promet nepokretnosti.",
+        "Lokalne komunalne takse, naknade za zemljište i sudske takse."
       ]
     },
     {
       "id": "kanc-001",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Kancelarijsko poslovanje je:",
       "answer": "Pomoćna djelatnost organa uprave.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Pomoćna djelatnost organa uprave.",
@@ -389,12 +483,19 @@
         "djelatnost",
         "organa",
         "uprave"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "Osnovna djelatnost organa uprave.",
+        "Inspekcijska djelatnost organa uprave.",
+        "Sudski postupak pred organom uprave.",
+        "Pomoćna djelatnost organa uprave."
       ]
     },
     {
       "id": "kanc-002",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Kancelarijsko poslovanje obuhvata sljedeće radnje:",
       "answer": "Primanje, otvaranje, pregledanje i raspoređivanje pošte, odnosno akata, zavođenje akata, njihovo zaduživanje i dostavljanje u rad, administrativno-tehničko obrađivanje akata, otpremanje pošte, razvođenje akata, arhiviranje i čuvanje.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Primanje, otvaranje, pregledanje i raspoređivanje pošte, odnosno akata, zavođenje akata, njihovo zaduživanje i dostavljanje u rad, administrativno-tehničko obrađivanje akata, otpremanje pošte, razvođenje akata, arhiviranje i čuvanje.",
@@ -411,12 +512,19 @@
         "otvaranje",
         "pregledanje",
         "raspoređivanje"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "Primanje, otvaranje, pregledanje i raspoređivanje pošte, odnosno akata, zavođenje akata, njihovo zaduživanje i dostavljanje u rad, administrativno-tehničko obrađivanje akata, otpremanje pošte, razvođenje akata, arhiviranje i čuvanje.",
+        "Samo arhiviranje i čuvanje završenih predmeta poslije okončanog postupka.",
+        "Isključivo primanje pošte i izdavanje potvrda strankama.",
+        "Samo izrada rješenja, zaključaka i drugih upravnih akata."
       ]
     },
     {
       "id": "kanc-003",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "“Akt” je:",
       "answer": "Pisani sastav kojim se pokreće službena radnja.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Pisani sastav kojim se pokreće službena radnja.",
@@ -430,12 +538,19 @@
         "pokreće",
         "službena",
         "radnja"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "Usmena obavijest kojom se završava službena radnja.",
+        "Fizički predmet koji se prilaže uz dopis.",
+        "Pisani sastav kojim se pokreće službena radnja.",
+        "Skup više predmeta koji se čuvaju na istom mjestu."
       ]
     },
     {
       "id": "kanc-004",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "“Prilog je” između ostalog:",
       "answer": "Fizički predmet.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Fizički predmet.",
@@ -449,12 +564,19 @@
         "ostalog",
         "fizički",
         "predmet"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "Službeni akt.",
+        "Fizički predmet.",
+        "Arhivska knjiga.",
+        "Djelovodnik predmeta."
       ]
     },
     {
       "id": "kanc-005",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Predmet je:",
       "answer": "Skup svih akata i priloga koji se odnose na pitanje ili zadatak i čini posebnu ili samostalnu cjelinu.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Skup svih akata i priloga koji se odnose na pitanje ili zadatak i čini posebnu ili samostalnu cjelinu.",
@@ -471,12 +593,19 @@
         "odnose",
         "pitanje",
         "zadatak"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "Jedan pisani akt bez priloga i bez posebne cjeline.",
+        "Knjiga u koju se evidentiraju primljeni i otpremljeni akti.",
+        "Kutija ili omot u kojem se čuva više dosijea.",
+        "Skup svih akata i priloga koji se odnose na pitanje ili zadatak i čini posebnu ili samostalnu cjelinu."
       ]
     },
     {
       "id": "kanc-006",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Šta je “dosje”:",
       "answer": "Dosje predstavlja skup više predmeta koji se odnose na istu materiju ili isto pravno ili fizičko lice i koji se kao jedna cjelina čuvaju na istom mjestu.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Dosje predstavlja skup više predmeta koji se odnose na istu materiju ili isto pravno ili fizičko lice i koji se kao jedna cjelina čuvaju na istom mjestu.",
@@ -493,12 +622,19 @@
         "odnose",
         "istu",
         "materiju"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "Dosje predstavlja skup više predmeta koji se odnose na istu materiju ili isto pravno ili fizičko lice i koji se kao jedna cjelina čuvaju na istom mjestu.",
+        "Dosje je jedan akt kojim se pokreće službena radnja u organu uprave.",
+        "Dosje je fizički predmet koji se prilaže uz službeni dopis.",
+        "Dosje je prijemni štambilj kojim se potvrđuje datum prijema akta."
       ]
     },
     {
       "id": "kanc-007",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Šta je “fascikl”:",
       "answer": "Fascikl predstavlja omot, kutiju, sanduk, korice i slično u kojim je složeno više predmeta ili više dosijea koji se poslije završenog postupka čuvaju sređeni u tim fasciklama.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Fascikl predstavlja omot, kutiju, sanduk, korice i slično u kojim je složeno više predmeta ili više dosijea koji se poslije završenog postupka čuvaju sređeni u tim fasciklama.",
@@ -515,12 +651,19 @@
         "korice",
         "slično",
         "složeno"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "Fascikl predstavlja službeni akt kojim se pokreće upravni postupak.",
+        "Fascikl predstavlja evidenciju o predmetima i aktima organa uprave.",
+        "Fascikl predstavlja omot, kutiju, sanduk, korice i slično u kojim je složeno više predmeta ili više dosijea koji se poslije završenog postupka čuvaju sređeni u tim fasciklama.",
+        "Fascikl predstavlja rok do kojeg se predmet mora vratiti iz arhive."
       ]
     },
     {
       "id": "kanc-008",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Šta je “arhivska građa”:",
       "answer": "Arhivska građa je sav izvorni i reproducirani (pisani, crtani, štampani, fotografirani, filmovani, fonografirani ili na drugi način zabilježeni) dokumentacioni material od značaja za istoriju, kulturu i ostale društvene potrebe, koji je nastao u radu institucija BiH bez obzira kada je i gdje je nastao.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Arhivska građa je sav izvorni i reproducirani (pisani, crtani, štampani, fotografirani, filmovani, fonografirani ili na drugi način zabilježeni) dokumentacioni material od značaja za istoriju, kulturu i ostale društvene potrebe, koji je nastao u radu institucija BiH bez obzira kada je i gdje je nastao.",
@@ -537,12 +680,19 @@
         "crtani",
         "štampani",
         "fotografirani"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "Arhivska građa je samo dokumentacija nastala u posljednjih pet godina rada institucije.",
+        "Arhivska građa je sav izvorni i reproducirani (pisani, crtani, štampani, fotografirani, filmovani, fonografirani ili na drugi način zabilježeni) dokumentacioni material od značaja za istoriju, kulturu i ostale društvene potrebe, koji je nastao u radu institucija BiH bez obzira kada je i gdje je nastao.",
+        "Arhivska građa su isključivo finansijski izvještaji i računi nastali u radu institucija BiH.",
+        "Arhivska građa je pomoćna knjiga u koju se upisuje pristigla pošta."
       ]
     },
     {
       "id": "kanc-009",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Šta je “pisarnica”:",
       "answer": "Pisarnica je organizacijska jedinica ili radno mjesto u instituciji BiH gdje se vrši djelatnost kancelarijskog poslovanja.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Pisarnica je organizacijska jedinica ili radno mjesto u instituciji BiH gdje se vrši djelatnost kancelarijskog poslovanja.",
@@ -559,12 +709,19 @@
         "instituciji",
         "gdje",
         "vrši"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "Pisarnica je prostor namijenjen isključivo čuvanju završenih predmeta do njihovog uništenja.",
+        "Pisarnica je knjiga u koju se upisuju predmeti prvostepenog upravnog postupka.",
+        "Pisarnica je službeni pečat kojim se ovjeravaju akti institucija BiH.",
+        "Pisarnica je organizacijska jedinica ili radno mjesto u instituciji BiH gdje se vrši djelatnost kancelarijskog poslovanja."
       ]
     },
     {
       "id": "kanc-010",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Šta je “arhiva”:",
       "answer": "Arhiva je dio pisarnice gdje se čuvaju završeni (arhivirani) predmeti i akti, evidencije o aktima i predmetima, kao i ostali dokumentacijski material do njihove predaje Arhivu BiH ili do njihovog uništenja.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Arhiva je dio pisarnice gdje se čuvaju završeni (arhivirani) predmeti i akti, evidencije o aktima i predmetima, kao i ostali dokumentacijski material do njihove predaje Arhivu BiH ili do njihovog uništenja.",
@@ -581,12 +738,19 @@
         "arhivirani",
         "predmeti",
         "akti"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "Arhiva je dio pisarnice gdje se čuvaju završeni (arhivirani) predmeti i akti, evidencije o aktima i predmetima, kao i ostali dokumentacijski material do njihove predaje Arhivu BiH ili do njihovog uništenja.",
+        "Arhiva je organizacijska jedinica gdje se prima i raspoređuje sva pristigla pošta.",
+        "Arhiva je službeni obrazac kojim se pokreće upravni postupak.",
+        "Arhiva je knjiga za evidenciju povjerljive i strogo povjerljive pošte."
       ]
     },
     {
       "id": "kanc-011",
       "categoryId": "kanc",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "U osnovne knjige evidencije o predmetima i aktima organa uprave spada:",
       "answer": "Djelovodnik predmeta i akata.",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Djelovodnik predmeta i akata.",
@@ -603,12 +767,19 @@
         "organa",
         "uprave",
         "spada"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "Arhivski sanduk i omot predmeta.",
+        "Knjiga službenih legitimacija.",
+        "Djelovodnik predmeta i akata.",
+        "Registar zaposlenih i knjiga plata."
       ]
     },
     {
       "id": "car-001",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Carinsko područje Bosne i Hercegovine obuhvata:",
       "answer": "teritoriju Bosne i Hercegovine uključujući teritorijalne vode, unutrašnje vode i vazdušni prostor Bosne i Hercegovine",
       "rationale": "Tačan odgovor prema izvornom dokumentu: teritoriju Bosne i Hercegovine uključujući teritorijalne vode, unutrašnje vode i vazdušni prostor Bosne i Hercegovine",
@@ -625,12 +796,19 @@
         "teritorijalne",
         "vode",
         "unutrašnje"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "samo kopneni dio teritorije Bosne i Hercegovine bez teritorijalnih voda",
+        "teritoriju Bosne i Hercegovine uključujući teritorijalne vode, unutrašnje vode i vazdušni prostor Bosne i Hercegovine",
+        "teritoriju entiteta bez Brčko distrikta i bez vazdušnog prostora",
+        "samo područje graničnih prelaza i carinskih ispostava"
       ]
     },
     {
       "id": "car-002",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Carinski propisi obuhvataju:",
       "answer": "Zakon o carinskoj politici u Bosni i Hercegovini i propise donijete na osnovu tog zakona",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Zakon o carinskoj politici u Bosni i Hercegovini i propise donijete na osnovu tog zakona",
@@ -647,12 +825,19 @@
         "politici",
         "hercegovini",
         "propise"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "Zakon o porezu na dodatu vrijednost i propise donesene na osnovu tog zakona",
+        "Zakon o radu u institucijama BiH i podzakonske akte o zaposlenima",
+        "Odluke opštinskih organa o lokalnim taksama i naknadama",
+        "Zakon o carinskoj politici u Bosni i Hercegovini i propise donijete na osnovu tog zakona"
       ]
     },
     {
       "id": "car-003",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Carinski organ je:",
       "answer": "Uprava za indirektno oporezivanje, što uključuje i njene organizacione jedinice",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Uprava za indirektno oporezivanje, što uključuje i njene organizacione jedinice",
@@ -667,12 +852,19 @@
         "njene",
         "organizacione",
         "jedinice"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "Uprava za indirektno oporezivanje, što uključuje i njene organizacione jedinice",
+        "Svako pravno lice koje obavlja spoljnotrgovinski promet robe",
+        "Samo granična policija na međunarodnim graničnim prelazima",
+        "Prevoznik koji robu doprema u carinsko područje Bosne i Hercegovine"
       ]
     },
     {
       "id": "car-004",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Carinski postupci su:",
       "answer": "carinsko skladištenje, privremeni uvoz, puštanje robe u slobodan promet",
       "rationale": "Tačan odgovor prema izvornom dokumentu: carinsko skladištenje, privremeni uvoz, puštanje robe u slobodan promet",
@@ -689,12 +881,19 @@
         "uvoz",
         "puštanje",
         "robe"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "pregled robe, izdavanje računa i otprema pošte",
+        "arhiviranje robe, registracija obveznika i naplata putarine",
+        "carinsko skladištenje, privremeni uvoz, puštanje robe u slobodan promet",
+        "izdavanje putnih isprava, kontrola prebivališta i registracija vozila"
       ]
     },
     {
       "id": "car-005",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Carinska deklaracija je:",
       "answer": "zahtjev ili radnja kojom lice, u propisanom obliku i na propisani način, zahtijeva stavljanje robe u određeni carinski postupak",
       "rationale": "Tačan odgovor prema izvornom dokumentu: zahtjev ili radnja kojom lice, u propisanom obliku i na propisani način, zahtijeva stavljanje robe u određeni carinski postupak",
@@ -711,12 +910,19 @@
         "lice",
         "propisanom",
         "obliku"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "račun kojim prodavac dokazuje vrijednost robe u prometu",
+        "zahtjev ili radnja kojom lice, u propisanom obliku i na propisani način, zahtijeva stavljanje robe u određeni carinski postupak",
+        "potvrda kojom carinski organ evidentira plaćanje putarine",
+        "prevozna isprava koja se koristi u međunarodnom željezničkom saobraćaju"
       ]
     },
     {
       "id": "car-006",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Carina je:",
       "answer": "vrsta uvozne dažbine koja se naplaćuje na stranu robu koja podliježe naplati te dažbine",
       "rationale": "Tačan odgovor prema izvornom dokumentu: vrsta uvozne dažbine koja se naplaćuje na stranu robu koja podliježe naplati te dažbine",
@@ -733,12 +939,19 @@
         "stranu",
         "robu",
         "podliježe"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "porez na dodatu vrijednost koji se obračunava na svu domaću robu",
+        "kazna koja se izriče za svako zakašnjenje u dostavi dokumentacije",
+        "naknada za skladištenje robe u privatnom skladištu",
+        "vrsta uvozne dažbine koja se naplaćuje na stranu robu koja podliježe naplati te dažbine"
       ]
     },
     {
       "id": "car-007",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Jedinstvena stopa carine iznosi:",
       "answer": "10% ad valorem",
       "rationale": "Tačan odgovor prema izvornom dokumentu: 10% ad valorem",
@@ -751,12 +964,19 @@
         "stopa",
         "iznosi",
         "valorem"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "10% ad valorem",
+        "5% ad valorem",
+        "12% ad valorem",
+        "17% ad valorem"
       ]
     },
     {
       "id": "car-008",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Da li se jedinstvena stopa carine od 10% ad valorem naplaćuje na robu:",
       "answer": "i u carinskoj ispostavi i na graničnom prelazu",
       "rationale": "Tačan odgovor prema izvornom dokumentu: i u carinskoj ispostavi i na graničnom prelazu",
@@ -773,12 +993,19 @@
         "carinskoj",
         "ispostavi",
         "graničnom"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "samo u carinskoj ispostavi",
+        "samo na graničnom prelazu",
+        "i u carinskoj ispostavi i na graničnom prelazu",
+        "isključivo u carinskom skladištu tipa D"
       ]
     },
     {
       "id": "car-009",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Granični prelazi određeni su:",
       "answer": "međunarodnim ugovorima/sporazumima koje je Bosna i Hercegovina sklopila sa susjednim državama",
       "rationale": "Tačan odgovor prema izvornom dokumentu: međunarodnim ugovorima/sporazumima koje je Bosna i Hercegovina sklopila sa susjednim državama",
@@ -795,12 +1022,19 @@
         "sporazumima",
         "sklopila",
         "susjednim"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "odlukama lokalnih zajednica na čijoj teritoriji se prelaz nalazi",
+        "međunarodnim ugovorima/sporazumima koje je Bosna i Hercegovina sklopila sa susjednim državama",
+        "internim aktima prevoznika koji koriste određeni granični prelaz",
+        "pojedinačnim rješenjem carinske kancelarije za svaku pošiljku"
       ]
     },
     {
       "id": "car-010",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Roba komercijalnog karaktera unosi se u carinsko područje Bosne i Hercegovine preko:",
       "answer": "graničnih prelaza određenih za međunarodi saobraćaj putnika i robe",
       "rationale": "Tačan odgovor prema izvornom dokumentu: graničnih prelaza određenih za međunarodi saobraćaj putnika i robe",
@@ -817,12 +1051,19 @@
         "područje",
         "preko",
         "graničnih"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "svih graničnih prelaza bez obzira na kategoriju i namjenu",
+        "isključivo poštanskih carinskih ispostava u unutrašnjosti zemlje",
+        "prelaza određenih samo za lokalni pogranični saobraćaj putnika",
+        "graničnih prelaza određenih za međunarodi saobraćaj putnika i robe"
       ]
     },
     {
       "id": "car-011",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Roba nekomerijalnog karaktera je:",
       "answer": "roba za koju se određeni carinski postupak zahtijeva povremeno i čija vrsta i količina ukazuju na to da je namijenjena za privatnu, ličnu ili upotrebu u domaćinstvu primaoca ili lica koje je unosi ili je jasno da se radi o poklonima",
       "rationale": "Tačan odgovor prema izvornom dokumentu: roba za koju se određeni carinski postupak zahtijeva povremeno i čija vrsta i količina ukazuju na to da je namijenjena za privatnu, ličnu ili upotrebu u domaćinstvu primaoca ili lica koje je unosi ili je jasno da se radi o poklonima",
@@ -839,12 +1080,19 @@
         "carinski",
         "postupak",
         "zahtijeva"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "roba za koju se određeni carinski postupak zahtijeva povremeno i čija vrsta i količina ukazuju na to da je namijenjena za privatnu, ličnu ili upotrebu u domaćinstvu primaoca ili lica koje je unosi ili je jasno da se radi o poklonima",
+        "roba koja se uvozi svakodnevno radi daljnje prodaje u neograničenim količinama",
+        "svaka roba čija vrijednost prelazi 20.000,00 KM po pošiljci",
+        "roba koja se isključivo stavlja u postupak carinskog skladištenja tipa A"
       ]
     },
     {
       "id": "car-012",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Obrazac PDV-SL-2 služi:",
       "answer": "za povrat poreza na dodatu vrijednost (PDV)",
       "rationale": "Tačan odgovor prema izvornom dokumentu: za povrat poreza na dodatu vrijednost (PDV)",
@@ -861,12 +1109,19 @@
         "poreza",
         "dodatu",
         "vrijednost"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "za prijavu gotovog novca preko državne granice",
+        "za odobrenje privremenog uvoza robe po karnetu ATA",
+        "za povrat poreza na dodatu vrijednost (PDV)",
+        "za vođenje evidencije robe u carinskom skladištu"
       ]
     },
     {
       "id": "car-013",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Pravo na povrat poreza na dodatu vrijednost za robu koju kupi u Bosni i Hercegovini i koju u prtljagu sa sobom iznosi iz Bosne i Hercegovine ima:",
       "answer": "strani državljanin",
       "rationale": "Tačan odgovor prema izvornom dokumentu: strani državljanin",
@@ -883,12 +1138,19 @@
         "robu",
         "koju",
         "kupi"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "domaći državljanin",
+        "strani državljanin",
+        "pravna osoba registrovana u BiH",
+        "carinski deklarant"
       ]
     },
     {
       "id": "car-014",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Strani državljanin ima pravo na povrat poreza na dodatu vrijednost za:",
       "answer": "svu robu, osim mineralnih ulja, alkohola i alkoholnih pića i prerađevine od duvana, čija je vrijednost sa plaćenim PDV-om veća od 100,00KM",
       "rationale": "Tačan odgovor prema izvornom dokumentu: svu robu, osim mineralnih ulja, alkohola i alkoholnih pića i prerađevine od duvana, čija je vrijednost sa plaćenim PDV-om veća od 100,00KM",
@@ -905,12 +1167,19 @@
         "dodatu",
         "vrijednost",
         "robu"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "samo mineralna ulja, alkoholna pića i prerađevine od duvana bez obzira na vrijednost",
+        "svu robu čija je vrijednost sa plaćenim PDV-om manja od 50,00KM",
+        "samo robu kupljenu za daljnju prodaju u Bosni i Hercegovini",
+        "svu robu, osim mineralnih ulja, alkohola i alkoholnih pića i prerađevine od duvana, čija je vrijednost sa plaćenim PDV-om veća od 100,00KM"
       ]
     },
     {
       "id": "car-015",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Vrste carinskog skladišta:",
       "answer": "i javna i vlastita",
       "rationale": "Tačan odgovor prema izvornom dokumentu: i javna i vlastita",
@@ -924,12 +1193,19 @@
         "skladišta",
         "javna",
         "vlastita"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "i javna i vlastita",
+        "samo javna",
+        "samo vlastita",
+        "državna i privatna"
       ]
     },
     {
       "id": "car-016",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Carinsko skladište tipa D je:",
       "answer": "vlastito carinsko skladište",
       "rationale": "Tačan odgovor prema izvornom dokumentu: vlastito carinsko skladište",
@@ -942,12 +1218,19 @@
         "skladište",
         "tipa",
         "vlastito"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "javno carinsko skladište",
+        "slobodno carinsko skladište",
+        "vlastito carinsko skladište",
+        "privremeno skladište za putnički prtljag"
       ]
     },
     {
       "id": "car-017",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Roba koja se smješta u carinsko skladište podliježe plaćanju uvoznih dažbina:",
       "answer": "u momentu kada se pušta u slobodan promet nakon postupka carinskog skladištenja",
       "rationale": "Tačan odgovor prema izvornom dokumentu: u momentu kada se pušta u slobodan promet nakon postupka carinskog skladištenja",
@@ -964,12 +1247,19 @@
         "plaćanju",
         "uvoznih",
         "dažbina"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "u momentu kada se roba smjesti u carinsko skladište",
+        "u momentu kada se pušta u slobodan promet nakon postupka carinskog skladištenja",
+        "prije izdavanja odobrenja za držanje carinskog skladišta",
+        "tek nakon isteka roka od tri godine od smještaja robe"
       ]
     },
     {
       "id": "car-018",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Roba u carinskom skladištu može se držati:",
       "answer": "nema roka ograničenja",
       "rationale": "Tačan odgovor prema izvornom dokumentu: nema roka ograničenja",
@@ -985,12 +1275,19 @@
         "nema",
         "roka",
         "ograničenja"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "najduže šest mjeseci",
+        "najduže godinu dana",
+        "najduže tri godine",
+        "nema roka ograničenja"
       ]
     },
     {
       "id": "car-019",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Roba se smješta u carinsko skladište:",
       "answer": "nakon izdavanja odobrenja za držanje carinskog skladišta",
       "rationale": "Tačan odgovor prema izvornom dokumentu: nakon izdavanja odobrenja za držanje carinskog skladišta",
@@ -1007,12 +1304,19 @@
         "izdavanja",
         "odobrenja",
         "držanje"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "nakon izdavanja odobrenja za držanje carinskog skladišta",
+        "prije podnošenja zahtjeva za odobrenje carinskog skladišta",
+        "nakon isteka roka za razduženje carinske deklaracije",
+        "samo poslije puštanja robe u slobodan promet"
       ]
     },
     {
       "id": "car-020",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Garancija za osiguranje carinskog duga za robu koja se stavlja u postupak carinskog skladištenja polaže se:",
       "answer": "prije izdavanja odobrenja za držanje carinskog skladišta",
       "rationale": "Tačan odgovor prema izvornom dokumentu: prije izdavanja odobrenja za držanje carinskog skladišta",
@@ -1029,12 +1333,19 @@
         "stavlja",
         "postupak",
         "skladištenja"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "nakon izdavanja odobrenja i poslije smještaja robe u skladište",
+        "tek nakon što roba bude puštena u slobodan promet",
+        "prije izdavanja odobrenja za držanje carinskog skladišta",
+        "samo nakon završetka postupka izvoza robe"
       ]
     },
     {
       "id": "car-021",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Garancija za osiguranje carinskog duga za robu koja se stavlja u postupak carinskog skladištenja u carinskom skladištu tipa A glasi:",
       "answer": "na držaoca carinskog skladišta tipa A",
       "rationale": "Tačan odgovor prema izvornom dokumentu: na držaoca carinskog skladišta tipa A",
@@ -1051,12 +1362,19 @@
         "stavlja",
         "postupak",
         "skladištenja"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "na deklaranta koji je podnio carinsku deklaraciju",
+        "na držaoca carinskog skladišta tipa A",
+        "na držaoca carinskog skladišta tipa C",
+        "na prevoznika koji robu doprema u skladište"
       ]
     },
     {
       "id": "car-022",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Garancija za osiguranje carinskog duga za robu koja se stavlja u postupak carinskog skladištenja u carinskom skladištu tipa C glasi:",
       "answer": "na držaoca carinskog skladišta tipa C ili na njegovog ovlaštenog zastupnika",
       "rationale": "Tačan odgovor prema izvornom dokumentu: na držaoca carinskog skladišta tipa C ili na njegovog ovlaštenog zastupnika",
@@ -1073,12 +1391,19 @@
         "stavlja",
         "postupak",
         "skladištenja"
+      ],
+      "answerIndex": 3,
+      "options": [
+        "na držaoca carinskog skladišta tipa A",
+        "na svakog korisnika skladišta pojedinačno",
+        "na carinsku kancelariju koja nadzire skladište",
+        "na držaoca carinskog skladišta tipa C ili na njegovog ovlaštenog zastupnika"
       ]
     },
     {
       "id": "car-023",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Držanje carinskog skladišta može se odobriti:",
       "answer": "pravnom licu registrovanom u Bosni i Hercegovini i upisanom u Jednstveni registar obveznika indirektnih poreza kod Uprave za indirektno oporezivanje po osnovu obavljanja spoljnotrgovinskog prometa",
       "rationale": "Tačan odgovor prema izvornom dokumentu: pravnom licu registrovanom u Bosni i Hercegovini i upisanom u Jednstveni registar obveznika indirektnih poreza kod Uprave za indirektno oporezivanje po osnovu obavljanja spoljnotrgovinskog prometa",
@@ -1095,12 +1420,19 @@
         "licu",
         "registrovanom",
         "hercegovini"
+      ],
+      "answerIndex": 0,
+      "options": [
+        "pravnom licu registrovanom u Bosni i Hercegovini i upisanom u Jednstveni registar obveznika indirektnih poreza kod Uprave za indirektno oporezivanje po osnovu obavljanja spoljnotrgovinskog prometa",
+        "svakom fizičkom licu koje povremeno uvozi robu za ličnu upotrebu",
+        "stranom pravnom licu bez registracije u Bosni i Hercegovini",
+        "prevozniku koji ima međunarodnu dozvolu za prevoz putnika"
       ]
     },
     {
       "id": "car-024",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Postupak unutrašnje obrade može se odobriti na osnovu:",
       "answer": "i na osnovu podnijetog zahtjeva i carinske deklaracije",
       "rationale": "Tačan odgovor prema izvornom dokumentu: i na osnovu podnijetog zahtjeva i carinske deklaracije",
@@ -1117,12 +1449,19 @@
         "podnijetog",
         "zahtjeva",
         "carinske"
+      ],
+      "answerIndex": 2,
+      "options": [
+        "isključivo na osnovu usmenog zahtjeva deklaranta",
+        "samo na osnovu fakture bez carinske deklaracije",
+        "i na osnovu podnijetog zahtjeva i carinske deklaracije",
+        "isključivo po službenoj dužnosti carinskog organa"
       ]
     },
     {
       "id": "car-025",
       "categoryId": "carine",
-      "questionType": "direct",
+      "questionType": "multiple-choice",
       "question": "Odobrenje za unutrašnju obradu po zahtjevu podnijetom na obrascu iz Priloga 26 Odluke o sprovođenju Zakona o carinskoj politici u Bosni i Hercegovini donosi:",
       "answer": "Odsjek za carinske poslove u regionalnim centrima Uprave za indirektno oporezivanje",
       "rationale": "Tačan odgovor prema izvornom dokumentu: Odsjek za carinske poslove u regionalnim centrima Uprave za indirektno oporezivanje",
@@ -1139,6 +1478,13 @@
         "obrascu",
         "priloga",
         "odluke"
+      ],
+      "answerIndex": 1,
+      "options": [
+        "Upravni odbor Uprave za indirektno oporezivanje",
+        "Odsjek za carinske poslove u regionalnim centrima Uprave za indirektno oporezivanje",
+        "Direktor Uprave za indirektno oporezivanje",
+        "Granična carinska kancelarija na mjestu ulaska robe"
       ]
     }
   ],

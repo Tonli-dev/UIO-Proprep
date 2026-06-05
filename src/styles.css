@@ -1223,6 +1223,72 @@ button {
   margin-top: 1.5rem;
 }
 
+.premium-plans {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.premium-plans-header h2 {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 1.45rem;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.pricing-card {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
+.pricing-card.featured {
+  border-color: rgba(29, 78, 216, 0.28);
+  background: #eff6ff;
+}
+
+.pricing-card .premium-label {
+  margin: 0;
+}
+
+.pricing-card h3,
+.pricing-card p {
+  margin: 0;
+}
+
+.pricing-card strong {
+  display: block;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.pricing-card p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.pricing-card button {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.launch-note {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border);
+}
+
 @media (max-width: 860px) {
   .app-header {
     align-items: flex-start;
@@ -1264,7 +1330,8 @@ button {
   .result-details,
   .install-grid,
   .account-grid,
-  .self-assessment {
+  .self-assessment,
+  .pricing-grid {
     grid-template-columns: 1fr;
   }
 

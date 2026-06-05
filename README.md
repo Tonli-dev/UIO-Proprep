@@ -65,10 +65,17 @@ Kopirajte `.env.example` u `.env` i unesite samo javne browser varijable:
 ```env
 VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
-VITE_PUBLIC_APP_URL=https://uio-proprep.vercel.app
+VITE_PUBLIC_APP_URL=https://carina.tonli.dev
 ```
 
 Detaljna konfiguracija email potvrde, Google OAutha, migracija, premium prava i Vercela opisana je u `docs/supabase-setup.md`.
+
+Premium kupovina koristi Lemon Squeezy checkout preko Supabase Edge Functions:
+
+- `create-premium-checkout` za prijavljene korisnike
+- `lemon-webhook` za potpisane Lemon Squeezy webhook evente
+
+Checkout se ne aktivira produkcijski dok Lemon Squeezy account, proizvodi, varijante i secrets nisu podešeni.
 
 ## Lokalni storage i sync
 

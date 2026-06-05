@@ -1,6 +1,6 @@
 import { requireSupabase, supabase } from "./supabase-client.js";
 
-const canonicalProductionUrl = "https://uio-proprep.vercel.app";
+const canonicalProductionUrl = "https://carina.tonli.dev";
 
 export function getAuthRedirectUrl({
   origin = globalThis.location?.origin,

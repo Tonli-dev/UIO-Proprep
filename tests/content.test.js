@@ -28,12 +28,19 @@ describe("uvozeni SSS set pitanja", () => {
     });
   });
 
-  it("čuva direktne odgovore u free setu bez generiranih distraktora", () => {
+  it("čuva ponuđene odgovore u free setu", () => {
     const directQuestions = content.questions.filter((question) => question.questionType === "direct");
     const multipleChoiceQuestions = content.questions.filter((question) => question.questionType === "multiple-choice");
 
-    expect(directQuestions).toHaveLength(50);
-    expect(directQuestions.every((question) => question.answer && question.options === undefined)).toBe(true);
-    expect(multipleChoiceQuestions).toHaveLength(0);
+    expect(directQuestions).toHaveLength(0);
+    expect(multipleChoiceQuestions).toHaveLength(50);
+    expect(
+      multipleChoiceQuestions.every((question) =>
+        Array.isArray(question.options)
+        && question.options.length === 4
+        && Number.isInteger(question.answerIndex)
+        && question.options[question.answerIndex] === question.answer
+      )
+    ).toBe(true);
   });
 });
