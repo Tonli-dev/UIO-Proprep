@@ -61,6 +61,8 @@ Otvoriti `http://localhost:5173`.
 - Beskonačni mod automatski dodaje novi set i nastavlja bez reload-a.
 - Duga pitanja i odgovori ne izlaze iz kartice na mobilnom prikazu.
 - Prethodna/sljedeća kartica rade bez preskakanja.
+- Crvena zastavica na kartici otvara isti obrazac za prijavu netačnog odgovora.
+- Report generirane kartice koristi ID izvornog pitanja, a ručna kartica koristi svoj ID.
 - Pretraga pronalazi guide sekcije i pitanja po keywordima.
 - Premium pitanja su označena u pretrazi.
 

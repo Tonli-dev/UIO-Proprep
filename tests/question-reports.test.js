@@ -35,4 +35,26 @@ describe("question reports", () => {
     expect(() => buildQuestionReportPayload({ question, suggestedAnswer: "Sarajevo" })).toThrow("Prijavite se");
     expect(() => buildQuestionReportPayload({ session, question, suggestedAnswer: " " })).toThrow("predloženi tačan odgovor");
   });
+
+  it("sprema prikazani odgovor ručne kartice", () => {
+    const flashcard = {
+      id: "card-custom-1",
+      categoryId: "uio",
+      question: "Ko rukovodi Upravom?",
+      answer: "Direktor.",
+      source: "Kartica za aktivno prisjećanje",
+      access: "free"
+    };
+
+    expect(buildQuestionReportPayload({
+      session,
+      question: flashcard,
+      suggestedAnswer: "Upravni odbor."
+    })).toMatchObject({
+      question_id: "card-custom-1",
+      options: [],
+      reported_answer: "Direktor.",
+      suggested_answer: "Upravni odbor."
+    });
+  });
 });

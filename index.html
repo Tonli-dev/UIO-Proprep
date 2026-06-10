@@ -155,10 +155,16 @@
               <strong id="flashcard-status">10 nasumičnih kartica</strong>
               <span id="flashcard-mode-status">Novi set je dostupan nakon zadnje kartice.</span>
             </div>
-            <label class="toggle-control">
-              <input id="flashcard-endless" type="checkbox">
-              <span>Beskonačni mod</span>
-            </label>
+            <div class="flashcard-toolbar-actions">
+              <button class="report-question-button" id="report-flashcard" type="button" title="Prijavi netačnu karticu">
+                <span aria-hidden="true">⚑</span>
+                <span>Prijavi karticu</span>
+              </button>
+              <label class="toggle-control">
+                <input id="flashcard-endless" type="checkbox">
+                <span>Beskonačni mod</span>
+              </label>
+            </div>
           </div>
           <button class="flashcard" id="flashcard" type="button" aria-live="polite">
             <span class="flashcard-inner" id="flashcard-inner">

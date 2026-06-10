@@ -56,6 +56,7 @@ const state = {
   syncInProgress: false,
   checkoutInProgress: false,
   reportInProgress: false,
+  reportTarget: null,
   recoveryMode: false
 };
 
@@ -102,6 +103,7 @@ const selectors = {
   flashcardCount: document.querySelector("#flashcard-count"),
   flashcardStatus: document.querySelector("#flashcard-status"),
   flashcardModeStatus: document.querySelector("#flashcard-mode-status"),
+  reportFlashcard: document.querySelector("#report-flashcard"),
   flashcardEndless: document.querySelector("#flashcard-endless"),
   previousCard: document.querySelector("#previous-card"),
   nextCard: document.querySelector("#next-card"),
@@ -156,7 +158,8 @@ function bindEvents() {
   });
 
   selectors.nextQuestion.addEventListener("click", nextQuestion);
-  selectors.reportQuestion.addEventListener("click", openQuestionReport);
+  selectors.reportQuestion.addEventListener("click", () => openQuestionReport(getCurrentQuestion()));
+  selectors.reportFlashcard.addEventListener("click", () => openQuestionReport(getCurrentFlashcardReportTarget()));
   selectors.reportForm.addEventListener("submit", handleQuestionReport);
   selectors.exitQuiz.addEventListener("click", showLobby);
   selectors.backToLobby.addEventListener("click", showLobby);
@@ -473,8 +476,7 @@ function renderQuestion() {
   });
 }
 
-function openQuestionReport() {
-  const question = getCurrentQuestion();
+function openQuestionReport(question) {
   if (!question) return;
 
   if (!state.session) {
@@ -484,6 +486,7 @@ function openQuestionReport() {
   }
 
   selectors.reportForm.reset();
+  state.reportTarget = question;
   selectors.reportQuestionPreview.textContent = question.question;
   selectors.reportModal.showModal();
   selectors.reportForm.elements.suggestedAnswer.focus();
@@ -493,7 +496,7 @@ async function handleQuestionReport(event) {
   event.preventDefault();
   if (state.reportInProgress) return;
 
-  const question = getCurrentQuestion();
+  const question = state.reportTarget;
   if (!question || !state.session) {
     selectors.reportModal.close();
     showToast("Prijavite se kako biste poslali prijavu pitanja.", "error");
@@ -515,11 +518,13 @@ async function handleQuestionReport(event) {
       contentVersion: state.data.contentVersion
     });
     selectors.reportModal.close();
-    selectors.reportQuestion.disabled = true;
+    if (question.id === getCurrentQuestion()?.id) selectors.reportQuestion.disabled = true;
+    if (question.id === getCurrentFlashcardReportTarget()?.id) selectors.reportFlashcard.disabled = true;
     showToast("Hvala. Prijava pitanja je poslana na pregled.");
   } catch (error) {
     showToast(getFriendlyError(error), "error");
   } finally {
+    state.reportTarget = null;
     state.reportInProgress = false;
     submitButton.disabled = false;
     submitButton.textContent = "Pošalji prijavu";
@@ -783,6 +788,7 @@ function renderFlashcard() {
     selectors.previousCard.disabled = true;
     selectors.nextCard.disabled = true;
     selectors.newCardSet.disabled = true;
+    selectors.reportFlashcard.disabled = true;
     return;
   }
 
@@ -808,6 +814,7 @@ function renderFlashcard() {
       ? "Možete generirati novih 10 kartica."
       : "Novi set je dostupan nakon zadnje kartice.";
   selectors.flashcardEndless.checked = state.flashcardEndless;
+  selectors.reportFlashcard.disabled = false;
   selectors.previousCard.disabled = state.flashcardIndex === 0;
   selectors.nextCard.disabled = isLastCard && !state.flashcardEndless;
   selectors.newCardSet.disabled = !isLastCard || state.flashcardEndless;
@@ -1303,6 +1310,25 @@ function clearExamTimer() {
 
 function getCurrentQuestion() {
   return state.activeQuestions[state.currentQuestionIndex];
+}
+
+function getCurrentFlashcardReportTarget() {
+  const card = state.flashcardDeck[state.flashcardIndex];
+  if (!card) return null;
+
+  const linkedQuestion = card.questionId
+    ? state.data.questions.find((question) => question.id === card.questionId)
+    : null;
+  if (linkedQuestion) return linkedQuestion;
+
+  return {
+    id: card.questionId || card.id,
+    categoryId: card.categoryId,
+    question: card.question,
+    answer: card.answer,
+    source: "Kartica za aktivno prisjećanje",
+    access: card.access || "free"
+  };
 }
 
 function countQuestions() {
