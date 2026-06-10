@@ -28,6 +28,7 @@ import {
 } from "./sync.js";
 import { createPremiumCheckout } from "./billing.js";
 import { PREMIUM_PACKAGES } from "./premium.js";
+import { submitQuestionReport } from "./question-reports.js";
 
 const state = {
   data: null,
@@ -54,6 +55,7 @@ const state = {
   deferredInstallPrompt: null,
   syncInProgress: false,
   checkoutInProgress: false,
+  reportInProgress: false,
   recoveryMode: false
 };
 
@@ -79,6 +81,7 @@ const selectors = {
   quizTimer: document.querySelector("#quiz-timer"),
   quizProgress: document.querySelector("#quiz-progress"),
   questionText: document.querySelector("#question-text"),
+  reportQuestion: document.querySelector("#report-question"),
   answers: document.querySelector("#answers"),
   feedback: document.querySelector("#feedback"),
   nextQuestion: document.querySelector("#next-question"),
@@ -119,6 +122,9 @@ const selectors = {
   installButton: document.querySelector("#install-button"),
   authButton: document.querySelector("#auth-button"),
   authModal: document.querySelector("#auth-modal"),
+  reportModal: document.querySelector("#report-modal"),
+  reportForm: document.querySelector("#report-form"),
+  reportQuestionPreview: document.querySelector("#report-question-preview"),
   authTabs: document.querySelectorAll("[data-auth-tab]"),
   loginPanel: document.querySelector("#auth-login-panel"),
   signupPanel: document.querySelector("#auth-signup-panel"),
@@ -150,6 +156,8 @@ function bindEvents() {
   });
 
   selectors.nextQuestion.addEventListener("click", nextQuestion);
+  selectors.reportQuestion.addEventListener("click", openQuestionReport);
+  selectors.reportForm.addEventListener("submit", handleQuestionReport);
   selectors.exitQuiz.addEventListener("click", showLobby);
   selectors.backToLobby.addEventListener("click", showLobby);
   selectors.retryQuiz.addEventListener("click", retryActiveQuiz);
@@ -436,6 +444,7 @@ function renderQuestion() {
   selectors.quizCounter.textContent = `Pitanje ${current}/${total}`;
   selectors.quizProgress.style.width = `${(current / total) * 100}%`;
   selectors.questionText.textContent = question.question;
+  selectors.reportQuestion.disabled = false;
   selectors.answers.innerHTML = "";
 
   if (!hasValidMultipleChoiceOptions(question)) {
@@ -462,6 +471,59 @@ function renderQuestion() {
     button.addEventListener("click", () => selectAnswer(index));
     selectors.answers.appendChild(button);
   });
+}
+
+function openQuestionReport() {
+  const question = getCurrentQuestion();
+  if (!question) return;
+
+  if (!state.session) {
+    showToast("Prijavite se kako biste poslali prijavu pitanja.", "error");
+    selectors.authModal.showModal();
+    return;
+  }
+
+  selectors.reportForm.reset();
+  selectors.reportQuestionPreview.textContent = question.question;
+  selectors.reportModal.showModal();
+  selectors.reportForm.elements.suggestedAnswer.focus();
+}
+
+async function handleQuestionReport(event) {
+  event.preventDefault();
+  if (state.reportInProgress) return;
+
+  const question = getCurrentQuestion();
+  if (!question || !state.session) {
+    selectors.reportModal.close();
+    showToast("Prijavite se kako biste poslali prijavu pitanja.", "error");
+    return;
+  }
+
+  const formData = new FormData(selectors.reportForm);
+  const submitButton = selectors.reportForm.querySelector('button[type="submit"]');
+  state.reportInProgress = true;
+  submitButton.disabled = true;
+  submitButton.textContent = "Slanje...";
+
+  try {
+    await submitQuestionReport({
+      session: state.session,
+      question,
+      suggestedAnswer: formData.get("suggestedAnswer"),
+      note: formData.get("note"),
+      contentVersion: state.data.contentVersion
+    });
+    selectors.reportModal.close();
+    selectors.reportQuestion.disabled = true;
+    showToast("Hvala. Prijava pitanja je poslana na pregled.");
+  } catch (error) {
+    showToast(getFriendlyError(error), "error");
+  } finally {
+    state.reportInProgress = false;
+    submitButton.disabled = false;
+    submitButton.textContent = "Pošalji prijavu";
+  }
 }
 
 function revealDirectAnswer(question) {
@@ -1208,6 +1270,9 @@ function getFriendlyError(error) {
   if (message.includes("Lemon Squeezy")) return "Premium kupovina još nije produkcijski konfigurirana.";
   if (message.includes("Odabrani premium paket")) return message;
   if (message.includes("Checkout link")) return "Checkout link trenutno nije dostupan. Pokušajte ponovo.";
+  if (message.includes("question_reports_user_question_pending_idx")) return "Ovo pitanje ste već prijavili i čeka pregled.";
+  if (message.includes("Prijavite se prije slanja")) return message;
+  if (message.includes("predloženi tačan odgovor")) return message;
   if (message.includes("Failed to fetch")) return "Trenutno nema veze sa serverom.";
   return "Akcija trenutno nije uspjela. Pokušajte ponovo.";
 }

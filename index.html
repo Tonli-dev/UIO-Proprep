@@ -111,7 +111,13 @@
           <div class="progress-track">
             <span id="quiz-progress"></span>
           </div>
-          <h2 id="question-text"></h2>
+          <div class="question-heading-row">
+            <h2 id="question-text"></h2>
+            <button class="report-question-button" id="report-question" type="button" title="Prijavi netačno pitanje">
+              <span aria-hidden="true">⚑</span>
+              <span>Prijavi pitanje</span>
+            </button>
+          </div>
           <div class="answers" id="answers"></div>
           <div class="feedback hidden" id="feedback"></div>
           <div class="quiz-actions">
@@ -277,6 +283,28 @@
       </form>
       <small class="muted">Registracijom prihvatate <a href="/terms.html" target="_blank" rel="noreferrer">Uvjete korištenja</a>, <a href="/privacy.html" target="_blank" rel="noreferrer">Politiku privatnosti</a> i <a href="/refund.html" target="_blank" rel="noreferrer">Refund policy</a>.</small>
     </div>
+  </dialog>
+
+  <dialog class="report-modal" id="report-modal">
+    <form method="dialog" class="modal-close-row">
+      <button class="ghost-button" aria-label="Zatvori prijavu pitanja">Zatvori</button>
+    </form>
+    <p class="eyebrow">Prijava sadržaja</p>
+    <h2>Šta nije tačno?</h2>
+    <p class="report-question-preview" id="report-question-preview"></p>
+    <form class="report-form" id="report-form">
+      <label>
+        Predloženi tačan odgovor
+        <textarea name="suggestedAnswer" rows="4" maxlength="1200" required
+          placeholder="Upišite odgovor za koji smatrate da je tačan."></textarea>
+      </label>
+      <label>
+        Dodatna napomena <span class="muted">(opcionalno)</span>
+        <textarea name="note" rows="3" maxlength="1200"
+          placeholder="Objasnite problem ili navedite izvor."></textarea>
+      </label>
+      <button class="primary-button" type="submit">Pošalji prijavu</button>
+    </form>
   </dialog>
 
   <script type="module" src="/src/app.js"></script>

@@ -40,6 +40,11 @@ Otvoriti `http://localhost:5173`.
 - “Samo pogrešna pitanja” je zaključano dok ne postoji pogrešan odgovor.
 - Nakon pogrešnog odgovora pitanje se pojavljuje u režimu pogrešnih pitanja.
 - Nakon tačnog odgovora na isto pitanje uklanja se iz pogrešnih pitanja.
+- Crvena zastavica “Prijavi pitanje” je vidljiva uz svako pitanje.
+- Gost koji pokuša prijaviti pitanje dobije poruku i modal za prijavu.
+- Prijavljen korisnik može upisati predloženi tačan odgovor i dodatnu napomenu.
+- Poslana prijava se vidi u Supabase `question_reports` sa statusom `pending`.
+- Ponovna prijava istog pitanja prije obrade prikazuje poruku da report već čeka pregled.
 
 ## Simulacija ispita
 

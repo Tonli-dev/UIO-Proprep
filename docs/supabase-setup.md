@@ -26,6 +26,17 @@ Pokrenite datoteke iz `supabase/migrations/` kroz Supabase CLI ili SQL editor. M
 
 Google preview deployi ne rade automatski; svaki preview origin mora biti posebno dopušten.
 
+## Prijave netačnih pitanja
+
+Migracija `20260610141729_create_question_reports.sql` dodaje tablicu `question_reports`.
+Samo prijavljeni korisnici mogu poslati prijavu i čitati vlastite prijave. Korisnik ne može
+mijenjati status niti brisati prijavu. Pregled svih prijava radi se u Supabase Dashboardu:
+
+1. Otvorite **Table Editor → question_reports**.
+2. Filtrirajte `status = pending`.
+3. Nakon ispravke pitanja postavite `status` na `resolved` i po želji popunite `resolution_note`.
+4. Ako prijava nije osnovana, postavite `status` na `dismissed`.
+
 ## Premium pravo
 
 Premium se dodjeljuje samo server-side izmjenom `public.entitlements`. Browser nema RLS policy za promjenu entitlementa niti premium pitanja.

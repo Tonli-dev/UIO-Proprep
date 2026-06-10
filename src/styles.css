@@ -538,6 +538,40 @@ button {
   line-height: 1.25;
 }
 
+.question-heading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.question-heading-row #question-text {
+  flex: 1;
+}
+
+.report-question-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.6rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  border-radius: 0.75rem;
+  background: #fff7f7;
+  color: #b91c1c;
+  font-weight: 850;
+}
+
+.report-question-button:hover:not(:disabled) {
+  border-color: #dc2626;
+  background: #fee2e2;
+}
+
+.report-question-button:disabled {
+  opacity: 0.5;
+}
+
 .answer-button {
   display: flex;
   align-items: center;
@@ -1037,7 +1071,8 @@ button {
   color: var(--muted);
 }
 
-.auth-modal {
+.auth-modal,
+.report-modal {
   width: min(32rem, calc(100% - 2rem));
   padding: 1.4rem;
   border: 1px solid var(--border);
@@ -1045,7 +1080,8 @@ button {
   box-shadow: var(--shadow-strong);
 }
 
-.auth-modal::backdrop {
+.auth-modal::backdrop,
+.report-modal::backdrop {
   background: rgba(15, 23, 42, 0.58);
   backdrop-filter: blur(5px);
 }
@@ -1102,16 +1138,46 @@ button {
 }
 
 .auth-form label,
-.profile-form label {
+.profile-form label,
+.report-form label {
   color: var(--muted);
   font-size: 0.82rem;
   font-weight: 900;
 }
 
-.auth-form input {
+.auth-form input,
+.report-form textarea {
   padding: 0.9rem;
   border: 1px solid var(--border);
   border-radius: 0.9rem;
+}
+
+.report-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.report-form label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.report-form textarea {
+  width: 100%;
+  resize: vertical;
+  color: var(--text);
+  font: inherit;
+  line-height: 1.45;
+}
+
+.report-question-preview {
+  margin: 0.75rem 0 1.25rem;
+  padding: 0.9rem;
+  border-left: 3px solid #dc2626;
+  background: #fff7f7;
+  color: var(--text);
+  font-weight: 750;
+  line-height: 1.45;
 }
 
 .google-button {
@@ -1343,10 +1409,16 @@ button {
   }
 
   .quiz-topbar,
+  .question-heading-row,
   .attempt-item,
   .result-hero {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .report-question-button {
+    align-self: stretch;
+    justify-content: center;
   }
 
   .quiz-actions {
